@@ -68,6 +68,7 @@ export function renderReportEmail(opts: {
     <div style="color:#6b7280;font-size:13px;margin-bottom:16px">Data as of ${esc(asOf)}</div>
     <div style="background:${VERDICT_COLORS[report.verdict] ?? "#f3f4f6"};padding:14px 16px;border-radius:10px;margin-bottom:20px">
       <div style="font-weight:700;font-size:16px">${esc(report.verdict)}</div>
+      ${report.watch_scheme_codes?.length ? `<div style="font-size:14px;margin-top:6px;font-weight:600">Fund to watch: ${esc(funds.filter((f) => report.watch_scheme_codes.includes(f.scheme_code)).map((f) => f.name.replace(/ - Direct Plan.*$/i, "")).join(", "))}</div>` : ""}
       <div style="font-size:14px;margin-top:4px">${esc(report.reason)}</div>
     </div>
     ${fundBlocks}

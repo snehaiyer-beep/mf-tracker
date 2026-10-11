@@ -9,7 +9,12 @@ export type ReportRow = {
   verdict: string | null;
   email_sent: boolean;
   created_at: string;
-  report: { funds: { scheme_code: number; summary: string }[]; verdict: string; reason: string } | null;
+  report: {
+    funds: { scheme_code: number; summary: string }[];
+    verdict: string;
+    watch_scheme_codes?: number[];
+    reason: string;
+  } | null;
 };
 
 const DOT: Record<string, string> = {

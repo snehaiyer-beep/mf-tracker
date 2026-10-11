@@ -60,6 +60,7 @@ export default function Home() {
     () => new Map((latestReport?.report?.funds ?? []).map((f) => [f.scheme_code, f.summary])),
     [latestReport],
   );
+  const watched = useMemo(() => new Set(latestReport?.report?.watch_scheme_codes ?? []), [latestReport]);
   const indexDate = data?.indices.find((i) => i.as_of)?.as_of;
 
   return (
@@ -98,8 +99,8 @@ export default function Home() {
               <div className="label mb-2">The market this week</div>
               <IndexTiles indices={data.indices} />
             </div>
-            <Verdict report={latestReport} />
-            <FundGrid funds={data.funds} latest={data.latest} sparks={data.sparks} summaries={summaries} />
+            <Verdict report={latestReport} funds={data.funds} />
+            <FundGrid funds={data.funds} latest={data.latest} sparks={data.sparks} summaries={summaries} watched={watched} />
             <div className="grid gap-4 lg:grid-cols-3">
               <div className="lg:col-span-2">
                 <TrendChart funds={data.funds} snapshots={data.snapshots} />

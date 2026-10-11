@@ -53,3 +53,9 @@ export function fromAmfiDate(d: string): string | null {
   const mm = MONTHS[m[2].toLowerCase()];
   return mm ? `${m[3]}-${mm}-${m[1].padStart(2, "0")}` : null;
 }
+
+/** Most recent Friday on or before `d`: the last trading day of a normal week. */
+export function lastFridayOnOrBefore(d: string): string {
+  const day = new Date(`${d}T00:00:00Z`).getUTCDay(); // 0 = Sunday … 5 = Friday
+  return addDays(d, -((day + 2) % 7));
+}

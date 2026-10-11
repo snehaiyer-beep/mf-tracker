@@ -38,11 +38,13 @@ export function FundGrid({
   latest,
   sparks,
   summaries,
+  watched,
 }: {
   funds: Fund[];
   latest: Record<number, Snapshot>;
   sparks: Record<number, number[]>;
   summaries: Map<number, string>;
+  watched: Set<number>;
 }) {
   const [open, setOpen] = useState<number | null>(null);
   const asOf = Object.values(latest).map((s) => s.week_ending).sort().pop();
@@ -85,6 +87,11 @@ export function FundGrid({
                         <div className="flex items-center gap-2">
                           <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: "var(--series-fund)" }} />
                           <span className="font-medium leading-snug">{f.name.replace(/ - Direct Plan.*$/i, "")}</span>
+                          {watched.has(f.scheme_code) && (
+                            <span className="shrink-0 rounded-full border border-amber-400/40 bg-amber-400/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-200">
+                              Watch
+                            </span>
+                          )}
                         </div>
                         <div className="mt-1 pl-[18px] text-[11px] text-faint">
                           {f.category?.replace(/^.*? - /, "") ?? "—"} · {f.scheme_code}

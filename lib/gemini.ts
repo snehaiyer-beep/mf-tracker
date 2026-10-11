@@ -11,6 +11,8 @@ export type Verdict = (typeof VERDICTS)[number];
 export type AiReport = {
   funds: { scheme_code: number; summary: string }[];
   verdict: Verdict;
+  /** scheme_codes of the fund(s) behind the verdict; empty when no action is needed. */
+  watch_scheme_codes: number[];
   reason: string;
 };
 
@@ -45,10 +47,11 @@ const responseSchema: Schema = {
       },
     },
     verdict: { type: Type.STRING, format: "enum", enum: [...VERDICTS] },
+    watch_scheme_codes: { type: Type.ARRAY, items: { type: Type.INTEGER } },
     reason: { type: Type.STRING },
   },
-  required: ["funds", "verdict", "reason"],
-  propertyOrdering: ["funds", "verdict", "reason"],
+  required: ["funds", "verdict", "watch_scheme_codes", "reason"],
+  propertyOrdering: ["funds", "verdict", "watch_scheme_codes", "reason"],
 };
 
 const SYSTEM_PROMPT = `You write a short weekly update on someone's mutual funds.
@@ -73,7 +76,9 @@ Then pick ONE verdict:
 - "No action needed": funds roughly in line with the market and similar funds.
 - "One fund worth watching": one fund has trailed similar funds clearly (e.g. several percentage points since January) or had an unusual drop.
 - "Consider reviewing your allocation": several funds are clearly lagging, or the mix looks lopsided.
-Give a one or two sentence plain-language reason. Never tell them to buy or sell a specific fund.`;
+Put the scheme_code of every fund behind the verdict in watch_scheme_codes (exactly one for
+"One fund worth watching", none for "No action needed"). The reason (one or two plain sentences) must
+name those funds by their short name, e.g. "SBI Small Cap Fund", and say what they are lagging. Never tell them to buy or sell a specific fund.`;
 
 export async function generateReport(input: ReportInput): Promise<AiReport> {
   const ai = new GoogleGenAI({ apiKey: requireEnv("GEMINI_API_KEY") });
@@ -104,6 +109,11 @@ export async function generateReport(input: ReportInput): Promise<AiReport> {
     throw new Error("Gemini returned invalid JSON");
   }
   if (!VERDICTS.includes(parsed.verdict)) parsed.verdict = "No action needed";
+  const validCodes = new Set(input.funds.map((f) => f.scheme_code));
+  parsed.watch_scheme_codes =
+    parsed.verdict === "No action needed"
+      ? []
+      : (parsed.watch_scheme_codes ?? []).map(Number).filter((c) => validCodes.has(c));
 
   // Make sure every fund has a summary, even if the model skipped one.
   const byCode = new Map(parsed.funds?.map((f) => [Number(f.scheme_code), f.summary]) ?? []);

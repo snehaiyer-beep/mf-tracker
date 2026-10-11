@@ -1,5 +1,5 @@
 /**
- * Backfill ~1 year of NAVs.
+ * Backfill ~2 years of NAVs and 52 weeks of trend snapshots.
  *
  *   npm run seed                    -> backfill every active fund (+ its benchmark and peers)
  *   npm run seed -- 122639 118989   -> add these scheme codes as funds, then backfill
@@ -13,6 +13,7 @@ config();
 import { ALL_BENCHMARKS } from "../lib/benchmarks";
 import { addFund, BACKFILL_DAYS, listFunds } from "../lib/funds";
 import { syncMany } from "../lib/nav";
+import { backfillSnapshots } from "../lib/snapshots";
 
 async function main() {
   const codes = process.argv.slice(2).map(Number).filter((n) => Number.isInteger(n) && n > 0);
@@ -36,6 +37,9 @@ async function main() {
   const summary = await syncMany(all, BACKFILL_DAYS, 4);
   console.log(`Done: ${summary.ok} ok, ${summary.rows} rows, ${summary.failed.length} failed`);
   summary.failed.forEach((f) => console.warn(`  failed ${f.code}: ${f.error}`));
+
+  const snaps = await backfillSnapshots(funds);
+  console.log(`Weekly snapshots written: ${snaps}`);
 }
 
 main().catch((err) => {

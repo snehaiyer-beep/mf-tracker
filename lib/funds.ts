@@ -2,9 +2,11 @@ import { pickPeers } from "./amfi";
 import { pickBenchmark } from "./benchmarks";
 import { fetchScheme } from "./mfapi";
 import { syncMany, type SyncSummary } from "./nav";
+import { backfillSnapshots } from "./snapshots";
 import { db, type Fund } from "./supabase";
 
-export const BACKFILL_DAYS = 400; // a year plus buffer so YTD always has last December
+// ~2 years: 52 weeks of trend snapshots, each needing the previous December for "since Jan".
+export const BACKFILL_DAYS = 800;
 
 export async function listFunds(): Promise<Fund[]> {
   const { data, error } = await db()
@@ -36,6 +38,11 @@ export async function addFund(code: number): Promise<{ fund: Fund; backfill: Syn
 
   const codes = [code, ...peers, ...(benchmark ? [benchmark.code] : [])];
   const backfill = await syncMany(codes, BACKFILL_DAYS);
+  try {
+    await backfillSnapshots([fund]); // a year of weekly points for the trend chart
+  } catch (err) {
+    console.error("Snapshot backfill failed", err);
+  }
   return { fund, backfill };
 }
 
