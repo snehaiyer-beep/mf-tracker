@@ -1,5 +1,6 @@
 "use client";
 
+import { prettyName } from "./format";
 import { useMemo, useState } from "react";
 import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import type { Fund, Snapshot } from "@/lib/supabase";
@@ -38,7 +39,7 @@ export function TrendChart({ funds, snapshots }: { funds: Fund[]; snapshots: Sna
           >
             {funds.map((f) => (
               <option key={f.scheme_code} value={f.scheme_code}>
-                {f.name.replace(/ - Direct Plan.*$/i, "")}
+                {prettyName(f.name)}
               </option>
             ))}
           </select>

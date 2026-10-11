@@ -53,3 +53,15 @@ export async function api<T>(url: string, init?: RequestInit): Promise<T> {
   }
   return json as T;
 }
+
+const ACRONYMS = new Set(["SBI", "HDFC", "ICICI", "UTI", "DSP", "IDFC", "US", "PSU", "ELSS", "FOF", "S&P", "ETF", "LIC", "PGIM", "HSBC"]);
+
+/** "SBI SMALL CAP FUND - Direct Plan - Growth" -> "SBI Small Cap Fund". */
+export function prettyName(name: string): string {
+  const base = name.replace(/\s*-\s*Direct Plan.*$/i, "").trim();
+  if (base !== base.toUpperCase()) return base;
+  return base
+    .split(/\s+/)
+    .map((w) => (ACRONYMS.has(w) ? w : w.charAt(0) + w.slice(1).toLowerCase()))
+    .join(" ");
+}

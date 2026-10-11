@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { FundGrid } from "@/components/FundGrid";
 import { FundManager } from "@/components/FundManager";
+import { Guide } from "@/components/Guide";
 import { api } from "@/components/format";
 import { IndexTiles, type IndexStat } from "@/components/IndexTiles";
 import { Reports, type ReportRow } from "@/components/Reports";
@@ -66,7 +67,7 @@ export default function Home() {
   return (
     <>
       <header className="sticky top-0 z-10 border-b border-line bg-bg/80 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3">
+        <div className="mx-auto flex max-w-[1400px] items-center justify-between gap-3 px-4 py-3">
           <div className="flex items-center gap-2.5">
             <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent/15 text-sm font-bold text-accent">₹</span>
             <div>
@@ -80,7 +81,7 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl space-y-4 px-4 py-5 sm:py-6">
+      <main className="mx-auto max-w-[1400px] space-y-4 px-4 py-5 sm:py-6">
         {runMsg && (
           <div className={`panel py-3 text-sm ${runMsg.kind === "ok" ? "border-up/40 text-up" : "border-down/40 text-down"}`}>{runMsg.text}</div>
         )}
@@ -94,24 +95,27 @@ export default function Home() {
         )}
 
         {data && (
-          <>
-            <div>
-              <div className="label mb-2">The market this week</div>
-              <IndexTiles indices={data.indices} />
-            </div>
-            <Verdict report={latestReport} funds={data.funds} />
-            <FundGrid funds={data.funds} latest={data.latest} sparks={data.sparks} summaries={summaries} watched={watched} />
-            <div className="grid gap-4 lg:grid-cols-3">
-              <div className="lg:col-span-2">
-                <TrendChart funds={data.funds} snapshots={data.snapshots} />
+          <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_340px]">
+            <div className="min-w-0 space-y-4">
+              <div>
+                <div className="label mb-2">The market this week</div>
+                <IndexTiles indices={data.indices} />
               </div>
-              <Reports reports={data.reports} funds={data.funds} />
+              <Verdict report={latestReport} funds={data.funds} />
+              <FundGrid funds={data.funds} latest={data.latest} sparks={data.sparks} summaries={summaries} watched={watched} />
+              <div className="grid gap-4 xl:grid-cols-3">
+                <div className="xl:col-span-2">
+                  <TrendChart funds={data.funds} snapshots={data.snapshots} />
+                </div>
+                <Reports reports={data.reports} funds={data.funds} />
+              </div>
+              <FundManager funds={data.funds} onChange={load} />
+              <p className="pb-16 text-center lg:pb-4 text-[11px] text-faint">
+                Index figures use index funds as a stand-in (proxy). “Similar” = average of 10 funds in the same category. Not financial advice.
+              </p>
             </div>
-            <FundManager funds={data.funds} onChange={load} />
-            <p className="pb-4 text-center text-[11px] text-faint">
-              Index figures use index funds as a stand-in (proxy). “Similar” = average of 10 funds in the same category. Not financial advice.
-            </p>
-          </>
+            <Guide funds={data.funds} latest={data.latest} indices={data.indices} verdict={latestReport?.verdict ?? null} />
+          </div>
         )}
       </main>
     </>

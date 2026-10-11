@@ -1,3 +1,4 @@
+import { prettyName } from "./format";
 import type { Fund } from "@/lib/supabase";
 import type { ReportRow } from "./Reports";
 
@@ -24,7 +25,7 @@ export function Verdict({ report, funds }: { report: ReportRow | undefined; fund
   }
   const v = report.report.verdict;
   const s = STYLE[v] ?? STYLE["No action needed"];
-  const nameByCode = new Map(funds.map((f) => [f.scheme_code, f.name.replace(/ - Direct Plan.*$/i, "")]));
+  const nameByCode = new Map(funds.map((f) => [f.scheme_code, prettyName(f.name)]));
   const watched = (report.report.watch_scheme_codes ?? []).map((c) => nameByCode.get(c) ?? `Scheme ${c}`);
   return (
     <section className={`panel flex items-start gap-4 ${s.ring} ${s.glow}`}>

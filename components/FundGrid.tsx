@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import type { Fund, Snapshot } from "@/lib/supabase";
-import { Pct, Sparkline } from "./format";
+import { fundStatus, STATUS_ICON, STATUS_STYLE } from "@/lib/status";
+import { Pct, prettyName, Sparkline } from "./format";
 
 type Period = { key: "wow" | "mom" | "ytd"; label: string };
 const PERIODS: Period[] = [
@@ -46,7 +47,15 @@ export function FundGrid({
   summaries: Map<number, string>;
   watched: Set<number>;
 }) {
-  const [open, setOpen] = useState<number | null>(null);
+  // Summaries are shown by default; this tracks the ones the reader has collapsed.
+  const [collapsed, setCollapsed] = useState<Set<number>>(new Set());
+  const toggle = (code: number) =>
+    setCollapsed((prev) => {
+      const next = new Set(prev);
+      if (next.has(code)) next.delete(code);
+      else next.add(code);
+      return next;
+    });
   const asOf = Object.values(latest).map((s) => s.week_ending).sort().pop();
 
   return (
@@ -76,17 +85,23 @@ export function FundGrid({
               {funds.map((f) => {
                 const s = latest[f.scheme_code];
                 const summary = summaries.get(f.scheme_code);
-                const isOpen = open === f.scheme_code;
+                const isOpen = !collapsed.has(f.scheme_code);
+                const status = fundStatus(s);
                 return (
                   <FundRow key={f.scheme_code}>
                     <tr
                       className={`cursor-pointer border-b border-line/70 align-top transition hover:bg-surface2/50 ${isOpen ? "bg-surface2/50" : ""}`}
-                      onClick={() => setOpen(isOpen ? null : f.scheme_code)}
+                      onClick={() => toggle(f.scheme_code)}
                     >
                       <td className="max-w-[260px] px-4 py-3 sm:px-5">
-                        <div className="flex items-center gap-2">
+                        <div className="flex flex-wrap items-center gap-2">
                           <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: "var(--series-fund)" }} />
-                          <span className="font-medium leading-snug">{f.name.replace(/ - Direct Plan.*$/i, "")}</span>
+                          <span className="font-medium leading-snug">{prettyName(f.name)}</span>
+                          {status && (
+                            <span title={status.hint} className={`shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${STATUS_STYLE[status.key]}`}>
+                              {STATUS_ICON[status.key]} {status.label}
+                            </span>
+                          )}
                           {watched.has(f.scheme_code) && (
                             <span className="shrink-0 rounded-full border border-amber-400/40 bg-amber-400/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-200">
                               Watch
@@ -97,8 +112,9 @@ export function FundGrid({
                           {f.category?.replace(/^.*? - /, "") ?? "—"} · {f.scheme_code}
                           {!f.benchmark_name && " · no matching index"}
                         </div>
+                        {status && <div className="mt-1 pl-[18px] text-[11px] text-muted">{status.hint}</div>}
                         {summary && (
-                          <div className="mt-1 pl-[18px] text-[11px] text-accent">{isOpen ? "Hide summary ▴" : "Read summary ▾"}</div>
+                          <div className="mt-1 pl-[18px] text-[11px] text-accent">{isOpen ? "Hide summary ▴" : "Show summary ▾"}</div>
                         )}
                       </td>
                       <td className="px-2 py-3">

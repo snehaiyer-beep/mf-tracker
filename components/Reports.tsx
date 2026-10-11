@@ -1,5 +1,6 @@
 "use client";
 
+import { prettyName } from "./format";
 import { useState } from "react";
 import type { Fund } from "@/lib/supabase";
 
@@ -25,7 +26,7 @@ const DOT: Record<string, string> = {
 
 export function Reports({ reports, funds }: { reports: ReportRow[]; funds: Fund[] }) {
   const [openId, setOpenId] = useState<number | null>(null);
-  const nameByCode = new Map(funds.map((f) => [f.scheme_code, f.name.replace(/ - Direct Plan.*$/i, "")]));
+  const nameByCode = new Map(funds.map((f) => [f.scheme_code, prettyName(f.name)]));
 
   return (
     <section className="panel">
