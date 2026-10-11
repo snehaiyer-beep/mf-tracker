@@ -1,6 +1,6 @@
 # Fund Pulse: Mutual Fund Tracker
 
-Track your mutual funds weekly against a market index (proxy) and the average of similar funds, with a plain-language AI summary emailed every Saturday at 8 AM IST.
+Track your mutual funds weekly against a market index (proxy) and the average of similar funds, with a plain-language AI summary emailed every Saturday at 11 AM IST.
 
 **Stack:** Next.js 14 (App Router, TypeScript, Tailwind) · Supabase · Gemini Flash (`@google/genai`) · Resend · NewsData.io · Vercel Cron
 
@@ -53,7 +53,7 @@ curl -H "Authorization: Bearer $CRON_SECRET" http://localhost:3000/api/cron/week
 3. Under **Environment Variables** add every variable from `.env.example`.
 4. **Deploy**. Crons from `vercel.json` are registered automatically on production deploys (see **Settings → Cron Jobs**):
    - daily `30 18 * * *` UTC (midnight IST): refresh NAVs + store news
-   - weekly `30 2 * * 6` UTC (Sat 8:00 AM IST): snapshot + Gemini report + email
+   - weekly `30 5 * * 6` UTC (Sat 11:00 AM IST): snapshot + Gemini report + email
 
    Vercel sends `Authorization: Bearer $CRON_SECRET` to cron routes automatically. On the Hobby plan, cron timing can drift within the hour.
 

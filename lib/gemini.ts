@@ -78,7 +78,9 @@ Then pick ONE verdict:
 - "Consider reviewing your allocation": several funds are clearly lagging, or the mix looks lopsided.
 Put the scheme_code of every fund behind the verdict in watch_scheme_codes (exactly one for
 "One fund worth watching", none for "No action needed"). The reason (one or two plain sentences) must
-name those funds by their short name, e.g. "SBI Small Cap Fund", and say what they are lagging. Never tell them to buy or sell a specific fund.`;
+name those funds by their short name, e.g. "SBI Small Cap Fund", and give the specific numbers behind
+the verdict (e.g. "up 5.6% since January while similar funds are up 9.1%"). For "No action needed", say
+specifically why (e.g. "all five funds are within 2 points of similar funds"). Never tell them to buy or sell a specific fund.`;
 
 export async function generateReport(input: ReportInput): Promise<AiReport> {
   const ai = new GoogleGenAI({ apiKey: requireEnv("GEMINI_API_KEY") });

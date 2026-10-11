@@ -53,13 +53,20 @@ export function Reports({ reports, funds }: { reports: ReportRow[]; funds: Fund[
                 </button>
                 {open && r.report && (
                   <div className="space-y-2 px-2 pb-3 text-xs leading-relaxed text-muted">
-                    <p className="text-ink">{r.report.reason}</p>
                     {r.report.funds.map((f) => (
                       <p key={f.scheme_code}>
                         <span className="font-semibold text-ink/90">{nameByCode.get(f.scheme_code) ?? f.scheme_code}: </span>
                         {f.summary}
                       </p>
                     ))}
+                    <div className="rounded-md border border-line bg-surface p-2">
+                      <div className="label mb-0.5">Overall portfolio assessment</div>
+                      <p className="font-semibold text-ink">{r.report.verdict}</p>
+                      <p className="text-ink/90">
+                        <span className="font-semibold">Why: </span>
+                        {r.report.reason}
+                      </p>
+                    </div>
                   </div>
                 )}
               </li>

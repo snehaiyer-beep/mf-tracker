@@ -12,7 +12,7 @@ flowchart LR
     UI["Dashboard page<br/>add/remove fund · returns table · trend chart · reports"]
     FUNDS["/api/funds<br/>validate code, pick benchmark + 10 peers, backfill 1y"]
     DAILY["/api/cron/daily<br/>00:00 IST · NAVs + news"]
-    WEEKLY["/api/cron/weekly<br/>Sat 08:00 IST · snapshot + report"]
+    WEEKLY["/api/cron/weekly<br/>Sat 11:00 IST · snapshot + report"]
     RUN["/api/report/run<br/>'Generate report now'"]
   end
 

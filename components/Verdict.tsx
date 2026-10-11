@@ -19,7 +19,7 @@ export function Verdict({ report, funds }: { report: ReportRow | undefined; fund
     return (
       <section className="panel flex items-center gap-3 border-dashed text-sm text-muted">
         <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-surface2 text-faint">?</span>
-        No report yet. One arrives every Saturday at 8 AM IST, or use “Generate report”.
+        No report yet. One arrives every Saturday at 11 AM IST, or use “Generate report”.
       </section>
     );
   }
@@ -33,7 +33,7 @@ export function Verdict({ report, funds }: { report: ReportRow | undefined; fund
         {s.icon}
       </span>
       <div className="min-w-0">
-        <div className="label">Overall verdict · week of {report.week_ending}</div>
+        <div className="label">Overall portfolio assessment · week of {report.week_ending}</div>
         <div className="mt-0.5 text-lg font-semibold">{v}</div>
         {watched.length > 0 && (
           <div className="mt-2 flex flex-wrap gap-2">
@@ -44,7 +44,13 @@ export function Verdict({ report, funds }: { report: ReportRow | undefined; fund
             ))}
           </div>
         )}
-        <p className="mt-2 text-sm text-muted">{report.report.reason}</p>
+        <p className="mt-2 text-sm text-muted">
+          <span className="font-semibold text-ink">Why: </span>
+          {report.report.reason}
+        </p>
+        {watched.length > 0 && (
+          <p className="mt-1.5 text-xs text-faint">This is one of the funds you already own, not a suggestion to buy. No need to sell; check again in a few weeks.</p>
+        )}
       </div>
     </section>
   );

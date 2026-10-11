@@ -62,20 +62,32 @@ export function renderReportEmail(opts: {
     .map((n) => `<li><a href="${esc(n.link)}" style="color:#1d4ed8">${esc(n.title)}</a>${n.source ? ` <span style="color:#6b7280">(${esc(n.source)})</span>` : ""}</li>`)
     .join("");
 
+  const watched = funds
+    .filter((f) => report.watch_scheme_codes?.includes(f.scheme_code))
+    .map((f) => f.name.replace(/ - Direct Plan.*$/i, ""));
+
   return `<!doctype html><html><body style="margin:0;background:#f9fafb;font-family:-apple-system,Segoe UI,Roboto,sans-serif;color:#111827">
   <div style="max-width:640px;margin:0 auto;padding:24px;background:#ffffff">
-    <h1 style="font-size:20px;margin:0 0 4px">Your weekly fund update</h1>
-    <div style="color:#6b7280;font-size:13px;margin-bottom:16px">Data as of ${esc(asOf)}</div>
-    <div style="background:${VERDICT_COLORS[report.verdict] ?? "#f3f4f6"};padding:14px 16px;border-radius:10px;margin-bottom:20px">
-      <div style="font-weight:700;font-size:16px">${esc(report.verdict)}</div>
-      ${report.watch_scheme_codes?.length ? `<div style="font-size:14px;margin-top:6px;font-weight:600">Fund to watch: ${esc(funds.filter((f) => report.watch_scheme_codes.includes(f.scheme_code)).map((f) => f.name.replace(/ - Direct Plan.*$/i, "")).join(", "))}</div>` : ""}
-      <div style="font-size:14px;margin-top:4px">${esc(report.reason)}</div>
-    </div>
+    <h1 style="font-size:20px;margin:0 0 4px">Good morning! Your Saturday fund update</h1>
+    <div style="color:#6b7280;font-size:13px;margin-bottom:20px">For the week ending ${esc(asOf)}</div>
+
+    <h2 style="font-size:15px;margin:0 0 6px">1. The market this week</h2>
+    <ul style="font-size:13px;padding-left:18px;margin:0 0 20px">${indexList}</ul>
+
+    <h2 style="font-size:15px;margin:0 0 10px">2. Your funds</h2>
     ${fundBlocks}
-    <h2 style="font-size:15px;margin:24px 0 6px">The market this week (index-fund proxies)</h2>
-    <ul style="font-size:13px;padding-left:18px;margin:0">${indexList}</ul>
-    ${newsList ? `<h2 style="font-size:15px;margin:20px 0 6px">Headlines</h2><ul style="font-size:13px;padding-left:18px;margin:0">${newsList}</ul>` : ""}
-    <p style="color:#9ca3af;font-size:11px;margin-top:24px">Market and category numbers use index funds and peer averages as stand-ins. This is not financial advice.</p>
+
+    ${newsList ? `<h2 style="font-size:15px;margin:4px 0 6px">3. What was in the news</h2><ul style="font-size:13px;padding-left:18px;margin:0 0 20px">${newsList}</ul>` : ""}
+
+    <h2 style="font-size:15px;margin:8px 0 8px">Overall portfolio assessment</h2>
+    <div style="background:${VERDICT_COLORS[report.verdict] ?? "#f3f4f6"};padding:14px 16px;border-radius:10px">
+      <div style="font-weight:700;font-size:17px">${esc(report.verdict)}</div>
+      ${watched.length ? `<div style="font-size:14px;margin-top:6px;font-weight:600">Fund to watch: ${esc(watched.join(", "))}</div>` : ""}
+      <div style="font-size:14px;margin-top:6px;line-height:1.5"><strong>Why:</strong> ${esc(report.reason)}</div>
+      ${watched.length ? `<div style="font-size:12px;margin-top:8px;color:#4b5563">This is one of the funds you already own, not a suggestion to buy. No need to sell; check again in a few weeks.</div>` : ""}
+    </div>
+
+    <p style="color:#9ca3af;font-size:11px;margin-top:24px">Market numbers use index funds as stand-ins; "similar funds" is the average of 10 funds in the same category. This is not financial advice.</p>
   </div></body></html>`;
 }
 
