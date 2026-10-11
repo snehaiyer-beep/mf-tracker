@@ -12,7 +12,7 @@ Track your mutual funds weekly against a market index (proxy) and the average of
 |---|---|
 | `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` | [supabase.com](https://supabase.com) → **New project** (pick region *Mumbai*, save the DB password somewhere) → wait ~2 min → **Project Settings → API**. Copy *Project URL* and the **`service_role`** secret (not `anon`). Newer projects show it under **API Keys → Secret keys**; a `sb_secret_...` key works too. |
 | `GEMINI_API_KEY` | [aistudio.google.com/apikey](https://aistudio.google.com/apikey) → sign in with Google → **Create API key** → copy. |
-| `GEMINI_MODEL` | Leave as `gemini-2.5-flash` unless you want another Flash model. |
+| `GEMINI_MODEL` | Set to `gemini-3.6-flash` unless you want another Flash model. |
 | `RESEND_API_KEY` | [resend.com](https://resend.com) → sign up → **API Keys → Create API Key** (permission: *Sending access*) → copy (shown once). |
 | `REPORT_EMAIL_TO` | The email address you signed up to Resend with. Without a verified domain, Resend's test sender `onboarding@resend.dev` **can only send to that address**. To send elsewhere, verify a domain under **Domains** and set `RESEND_FROM`. |
 | `NEWSDATA_API_KEY` | [newsdata.io/register](https://newsdata.io/register) → verify email → **Dashboard** shows your API key. Free plan = 200 credits/day; we use 1/day. If it fails, the app falls back to Google News RSS. |
