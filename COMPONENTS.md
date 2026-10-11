@@ -49,7 +49,7 @@ flowchart LR
 |---|---|
 | **mfapi.in** | Daily NAVs for each fund, its benchmark proxy and its category peers; scheme search for the add-fund form. |
 | **AMFI NAVAll.txt** | Maps each fund's category to 10 Direct-Growth peers for the category average. |
-| **Benchmark proxies** | Index-fund NAVs standing in for indices: Nifty 50, Nifty 500, Midcap 150, Smallcap 100/250, short-term gilt, S&P 500, Nasdaq 100. |
+| **Index proxies** | Index-fund NAVs standing in for the three tracked indices: Nifty 50, Nifty Midcap 150, Nifty Smallcap 100. Debt and overseas funds are compared with their similar-funds average only. |
 | **NewsData.io** | Daily Indian market and macro headlines, stored so the weekly report sees 7 days of news. |
 | **Supabase** | Stores funds, NAV history, news, weekly snapshots (for multi-week trends) and reports. |
 | **Daily cron** | Refreshes NAVs and news every night. |

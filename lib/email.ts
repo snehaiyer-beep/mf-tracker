@@ -46,7 +46,7 @@ export function renderReportEmail(opts: {
         <table style="border-collapse:collapse;width:100%">
           <tr><th ${td} align="left"></th><th ${td} align="left">Week</th><th ${td} align="left">Month</th><th ${td} align="left">Since Jan</th></tr>
           ${row("This fund", s?.wow, s?.mom, s?.ytd)}
-          ${row(`Market: ${esc(f.benchmark_name ?? "n/a")} (proxy)`, s?.bench_wow, s?.bench_mom, s?.bench_ytd)}
+          ${f.benchmark_name ? row(`Market: ${esc(f.benchmark_name)} (proxy)`, s?.bench_wow, s?.bench_mom, s?.bench_ytd) : ""}
           ${row("Similar funds (avg)", s?.cat_wow, s?.cat_mom, s?.cat_ytd)}
         </table>
       </div>`;

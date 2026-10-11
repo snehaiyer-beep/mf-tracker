@@ -1,4 +1,4 @@
-# MF Tracker
+# Fund Pulse: Mutual Fund Tracker
 
 Track your mutual funds weekly against a market index (proxy) and the average of similar funds, with a plain-language AI summary emailed every Saturday at 8 AM IST.
 
@@ -62,7 +62,7 @@ curl -H "Authorization: Bearer $CRON_SECRET" http://localhost:3000/api/cron/week
 ## How numbers are calculated
 
 - **Returns:** `% = (current / past − 1) × 100`. WoW = vs 7 days ago, MoM = vs 1 month ago, YTD = vs last NAV of previous December. `getNavOnOrBefore()` steps back over weekends and holidays.
-- **Benchmark (proxy):** an index fund's NAV stands in for the index (mfapi has no index data): Nifty 50 (120716), Nifty 500 (147625), Nifty Midcap 150 (147622), Nifty Smallcap 250 (147623), S&P 500 (148381), Nasdaq 100 FoF (145552). Picked from the fund's AMFI category; debt/arbitrage funds get none.
+- **Indices tracked (proxies):** only the three in the brief: Nifty 50 (UTI Nifty 50 Index Fund, 120716), Nifty Midcap 150 (Motilal Oswal Nifty Midcap 150 Index Fund, 147622), Nifty Smallcap 100 (Zerodha Nifty Smallcap 100 ETF, 153837). mfapi has no index data, so index-fund NAVs stand in. Each Indian equity fund is matched to one of them by category; debt and overseas funds have no matching index and are compared with their similar-funds average only.
 - **Category average:** mean return of 10 Direct-Growth peers from the same AMFI category (parsed from `NAVAll.txt`), stored in `funds.peer_codes`.
 
 ## Project layout

@@ -8,6 +8,8 @@ export function db(): SupabaseClient {
   if (!client) {
     client = createClient(requireEnv("SUPABASE_URL"), requireEnv("SUPABASE_SERVICE_ROLE_KEY"), {
       auth: { persistSession: false },
+      // Next.js 14 caches fetch() by default; database reads must always be fresh.
+      global: { fetch: (input, init) => fetch(input, { ...init, cache: "no-store" }) },
     });
   }
   return client;

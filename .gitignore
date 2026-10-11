@@ -6,3 +6,6 @@ out
 .env*.local
 .vercel
 *.tsbuildinfo
+
+.vercel
+.env*

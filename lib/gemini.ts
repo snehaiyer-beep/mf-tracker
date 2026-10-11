@@ -58,11 +58,15 @@ Say "this week", "this month", "since January", "the overall market", "similar f
 
 All returns are percentages. "wow" = this week, "mom" = this month (last 1 month), "ytd" = since 1 January.
 The market comparison numbers come from index funds used as a stand-in for the index.
+index_moves covers the three indices tracked: Nifty 50 (large companies), Nifty Midcap 150 (mid-sized)
+and Nifty Smallcap 100 (small companies).
 null means data was not available; never invent numbers.
 
 For EACH fund write exactly 3 sentences:
 1) how the fund did (this week, and the bigger picture since January);
-2) how that compares with the overall market and with similar funds;
+2) how that compares with the overall market and with similar funds. If benchmark.name is null, there is
+   no matching market index for that kind of fund (e.g. a bond fund or an overseas fund): compare it only
+   with similar funds;
 3) the most likely market reason, based only on the index moves and news headlines given. If the news doesn't explain it, say the move looks like normal market ups and downs.
 
 Then pick ONE verdict:

@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import type { Fund } from "@/lib/supabase";
-import { api } from "./format";
 
 export type ReportRow = {
   id: number;
@@ -13,74 +12,47 @@ export type ReportRow = {
   report: { funds: { scheme_code: number; summary: string }[]; verdict: string; reason: string } | null;
 };
 
-const VERDICT_STYLE: Record<string, string> = {
-  "No action needed": "bg-green-100 text-green-800",
-  "One fund worth watching": "bg-yellow-100 text-yellow-800",
-  "Consider reviewing your allocation": "bg-red-100 text-red-800",
+const DOT: Record<string, string> = {
+  "No action needed": "bg-up",
+  "One fund worth watching": "bg-amber-400",
+  "Consider reviewing your allocation": "bg-down",
 };
 
-export function Reports({ reports, funds, onChange }: { reports: ReportRow[]; funds: Fund[]; onChange: () => void }) {
-  const [running, setRunning] = useState(false);
-  const [message, setMessage] = useState<{ kind: "ok" | "error"; text: string } | null>(null);
-  const [openId, setOpenId] = useState<number | null>(reports[0]?.id ?? null);
-  const nameByCode = new Map(funds.map((f) => [f.scheme_code, f.name]));
-
-  async function run() {
-    setRunning(true);
-    setMessage(null);
-    try {
-      const res = await api<{ verdict: string; email_sent: boolean; email_error: string | null }>("/api/report/run", {
-        method: "POST",
-      });
-      setMessage({
-        kind: res.email_error ? "error" : "ok",
-        text: `Report ready: ${res.verdict}. ${res.email_sent ? "Email sent." : `Email not sent: ${res.email_error}`}`,
-      });
-      setOpenId(null);
-      onChange();
-    } catch (err) {
-      setMessage({ kind: "error", text: (err as Error).message });
-    } finally {
-      setRunning(false);
-    }
-  }
+export function Reports({ reports, funds }: { reports: ReportRow[]; funds: Fund[] }) {
+  const [openId, setOpenId] = useState<number | null>(null);
+  const nameByCode = new Map(funds.map((f) => [f.scheme_code, f.name.replace(/ - Direct Plan.*$/i, "")]));
 
   return (
-    <section className="card">
-      <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-        <h2 className="text-lg font-semibold">Reports</h2>
-        <button className="btn" onClick={run} disabled={running || funds.length === 0}>
-          {running ? "Generating… (up to a minute)" : "Generate report now"}
-        </button>
-      </div>
-      {message && (
-        <p className={`mb-3 text-sm ${message.kind === "ok" ? "text-green-700" : "text-red-700"}`}>{message.text}</p>
-      )}
+    <section className="panel">
+      <h2 className="mb-3 text-base font-semibold">Past reports</h2>
       {reports.length === 0 ? (
-        <p className="text-sm text-slate-500">No reports yet. One is generated every Saturday at 8 AM IST.</p>
+        <p className="text-sm text-muted">Nothing yet.</p>
       ) : (
-        <ul className="divide-y divide-slate-100">
+        <ul className="-mx-2 max-h-[300px] space-y-1 overflow-y-auto">
           {reports.map((r) => {
-            const open = openId === r.id || (openId === null && r === reports[0]);
+            const open = openId === r.id;
             return (
-              <li key={r.id} className="py-2">
-                <button className="flex w-full flex-wrap items-center justify-between gap-2 text-left" onClick={() => setOpenId(open ? -1 : r.id)}>
-                  <span className="text-sm font-medium">Week of {r.week_ending}</span>
-                  <span className="flex items-center gap-2">
-                    {r.verdict && (
-                      <span className={`rounded-full px-2 py-0.5 text-xs ${VERDICT_STYLE[r.verdict] ?? "bg-slate-100"}`}>{r.verdict}</span>
-                    )}
-                    <span className="text-xs text-slate-400">{r.email_sent ? "emailed" : "not emailed"}</span>
+              <li key={r.id} className={`rounded-lg ${open ? "bg-surface2" : ""}`}>
+                <button
+                  className="flex w-full items-center justify-between gap-2 rounded-lg px-2 py-2 text-left transition hover:bg-surface2"
+                  onClick={() => setOpenId(open ? null : r.id)}
+                >
+                  <span className="flex min-w-0 items-center gap-2">
+                    <span className={`h-2 w-2 shrink-0 rounded-full ${DOT[r.verdict ?? ""] ?? "bg-faint"}`} />
+                    <span className="truncate text-sm">{r.week_ending}</span>
+                  </span>
+                  <span className="shrink-0 text-[11px] text-muted">
+                    {r.verdict ?? "—"} {r.email_sent ? "· ✉" : ""}
                   </span>
                 </button>
                 {open && r.report && (
-                  <div className="mt-3 space-y-3 rounded-lg bg-slate-50 p-3 text-sm">
-                    <p className="font-medium">{r.report.reason}</p>
+                  <div className="space-y-2 px-2 pb-3 text-xs leading-relaxed text-muted">
+                    <p className="text-ink">{r.report.reason}</p>
                     {r.report.funds.map((f) => (
-                      <div key={f.scheme_code}>
-                        <div className="text-xs font-semibold text-slate-600">{nameByCode.get(f.scheme_code) ?? `Scheme ${f.scheme_code}`}</div>
-                        <p className="text-slate-700">{f.summary}</p>
-                      </div>
+                      <p key={f.scheme_code}>
+                        <span className="font-semibold text-ink/90">{nameByCode.get(f.scheme_code) ?? f.scheme_code}: </span>
+                        {f.summary}
+                      </p>
                     ))}
                   </div>
                 )}

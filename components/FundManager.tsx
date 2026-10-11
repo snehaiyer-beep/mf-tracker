@@ -74,33 +74,34 @@ export function FundManager({ funds, onChange }: { funds: Fund[]; onChange: () =
   const typedCode = /^\d+$/.test(query.trim()) ? Number(query.trim()) : null;
 
   return (
-    <section className="card">
-      <h2 className="mb-3 text-lg font-semibold">Your funds</h2>
+    <section className="panel">
+      <h2 className="text-base font-semibold">Add or remove funds</h2>
+      <p className="mb-3 mt-0.5 text-xs text-muted">Type a scheme code (e.g. 118989) or search by name. A year of prices is loaded automatically.</p>
 
       <div className="relative">
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search a fund by name (e.g. Parag Parikh Flexi) or type a scheme code"
-          className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-slate-500"
+          placeholder="Scheme code or fund name…"
+          className="input"
         />
         {typedCode && (
           <button className="btn mt-2" disabled={busyCode !== null} onClick={() => add(typedCode)}>
             {busyCode === typedCode ? "Adding… (loading a year of prices)" : `Add scheme ${typedCode}`}
           </button>
         )}
-        {searching && <p className="mt-2 text-sm text-slate-500">Searching…</p>}
+        {searching && <p className="mt-2 text-sm text-muted">Searching…</p>}
         {results.length > 0 && (
-          <ul className="mt-2 max-h-72 divide-y divide-slate-100 overflow-y-auto rounded-lg border border-slate-200">
+          <ul className="mt-2 max-h-72 divide-y divide-line overflow-y-auto rounded-lg border border-line">
             {results.map((r) => (
               <li key={r.schemeCode}>
                 <button
-                  className="flex w-full items-start justify-between gap-3 px-3 py-2 text-left text-sm hover:bg-slate-50 disabled:opacity-50"
+                  className="flex w-full items-start justify-between gap-3 px-3 py-2 text-left text-sm hover:bg-surface2 disabled:opacity-50"
                   disabled={busyCode !== null}
                   onClick={() => add(r.schemeCode)}
                 >
                   <span>{r.schemeName}</span>
-                  <span className="shrink-0 text-xs text-slate-400">
+                  <span className="shrink-0 text-xs text-faint">
                     {busyCode === r.schemeCode ? "Adding…" : r.schemeCode}
                   </span>
                 </button>
@@ -111,18 +112,18 @@ export function FundManager({ funds, onChange }: { funds: Fund[]; onChange: () =
       </div>
 
       {message && (
-        <p className={`mt-3 text-sm ${message.kind === "ok" ? "text-green-700" : "text-red-700"}`}>{message.text}</p>
+        <p className={`mt-3 text-sm ${message.kind === "ok" ? "text-up" : "text-down"}`}>{message.text}</p>
       )}
 
-      <ul className="mt-4 divide-y divide-slate-100">
-        {funds.length === 0 && <li className="py-3 text-sm text-slate-500">No funds yet. Search above to add one.</li>}
+      <ul className="mt-4 divide-y divide-line">
+        {funds.length === 0 && <li className="py-3 text-sm text-muted">No funds yet. Search above to add one.</li>}
         {funds.map((f) => (
           <li key={f.scheme_code} className="flex items-start justify-between gap-3 py-3">
             <div className="min-w-0">
               <div className="text-sm font-medium">{f.name}</div>
-              <div className="text-xs text-slate-500">
-                {f.category ?? "Unknown category"} · compared with {f.benchmark_name ?? "no index"}
-                {f.benchmark_name && " (proxy)"} · {f.peer_codes?.length ?? 0} similar funds
+              <div className="text-xs text-muted">
+                {f.category ?? "Unknown category"} ·{" "}
+                {f.benchmark_name ? `${f.benchmark_name} (proxy)` : "no matching index"} · {f.peer_codes?.length ?? 0} similar funds
               </div>
             </div>
             <button className="btn-ghost shrink-0" disabled={busyCode !== null} onClick={() => remove(f.scheme_code)}>
