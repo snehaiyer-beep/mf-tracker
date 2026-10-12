@@ -1,5 +1,7 @@
 # Fund Pulse: Mutual Fund Tracker
 
+![Components map](docs/components-map.png)
+
 Track your mutual funds weekly against a market index (proxy) and the average of similar funds, with a plain-language AI summary emailed every Saturday at 11 AM IST.
 
 **Stack:** Next.js 14 (App Router, TypeScript, Tailwind) · Supabase · Gemini Flash (`@google/genai`) · Resend · NewsData.io · Vercel Cron

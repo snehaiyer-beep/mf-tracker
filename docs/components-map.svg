@@ -1,0 +1,173 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <radialGradient id="glow" cx="12%" cy="0%" r="70%">
+      <stop offset="0%" stop-color="#3987e5" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#3987e5" stop-opacity="0"/>
+    </radialGradient>
+    <marker id="ab" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#3987e5"/></marker>
+    <marker id="aa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#f59e0b"/></marker>
+    <marker id="at" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#22b07d"/></marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1600" height="1000" fill="#070b16"/>
+  <rect width="1600" height="1000" fill="url(#glow)"/>
+
+  <!-- Title -->
+  <text x="48" y="62" fill="#e6eaf5" font-size="34" font-weight="700">Fund Pulse · Components Map</text>
+  <text x="48" y="94" fill="#8b95b3" font-size="17">Weekly mutual fund tracker for Meera · Problem Statement 19 · mf-tracker-delta.vercel.app</text>
+
+  <!-- ===== Panels ===== -->
+  <rect x="48" y="140" width="330" height="620" rx="20" fill="#0e1528" stroke="#1e2a4a" stroke-width="1.5"/>
+  <text x="72" y="174" fill="#8b95b3" font-size="13" font-weight="700" letter-spacing="1.5">LIVE PUBLIC DATA</text>
+
+  <rect x="450" y="140" width="420" height="620" rx="20" fill="#0e1528" stroke="#1e2a4a" stroke-width="1.5"/>
+  <text x="474" y="174" fill="#8b95b3" font-size="13" font-weight="700" letter-spacing="1.5">VERCEL · NEXT.JS 14</text>
+
+  <rect x="940" y="140" width="300" height="620" rx="20" fill="#0e1528" stroke="#1e2a4a" stroke-width="1.5"/>
+  <text x="964" y="174" fill="#8b95b3" font-size="13" font-weight="700" letter-spacing="1.5">SUPABASE · POSTGRES</text>
+
+  <!-- ===== Sources ===== -->
+  <rect x="72" y="200" width="282" height="120" rx="14" fill="#141d36" stroke="#3987e5" stroke-width="1.5"/>
+  <text x="92" y="236" fill="#e6eaf5" font-size="20" font-weight="700">mfapi.in</text>
+  <text x="92" y="266" fill="#b7c0d8" font-size="15">Daily NAVs · 6 years of history</text>
+  <text x="92" y="292" fill="#b7c0d8" font-size="15">Fund search by name or code</text>
+
+  <rect x="72" y="350" width="282" height="120" rx="14" fill="#141d36" stroke="#22b07d" stroke-width="1.5"/>
+  <text x="92" y="386" fill="#e6eaf5" font-size="20" font-weight="700">AMFI NAVAll.txt</text>
+  <text x="92" y="416" fill="#b7c0d8" font-size="15">Every scheme + its category</text>
+  <text x="92" y="442" fill="#b7c0d8" font-size="15">→ 10 similar funds (peers)</text>
+
+  <rect x="72" y="500" width="282" height="110" rx="14" fill="#141d36" stroke="#3987e5" stroke-width="1.5"/>
+  <text x="92" y="536" fill="#e6eaf5" font-size="20" font-weight="700">NewsData.io</text>
+  <text x="92" y="566" fill="#b7c0d8" font-size="15">Indian market &amp; macro news</text>
+  <text x="92" y="590" fill="#8b95b3" font-size="14">Fallback: Google News RSS</text>
+
+  <rect x="72" y="630" width="282" height="110" rx="14" fill="#141d36" stroke="#2a3a63" stroke-width="1.5" stroke-dasharray="5 4"/>
+  <text x="92" y="664" fill="#e6eaf5" font-size="17" font-weight="700">Index stand-ins (via mfapi)</text>
+  <text x="92" y="692" fill="#b7c0d8" font-size="14">Nifty 50 · Midcap 150 · Smallcap 100</text>
+  <text x="92" y="716" fill="#b7c0d8" font-size="14">+ each fund's stated benchmark</text>
+
+  <!-- ===== Vercel ===== -->
+  <rect x="474" y="200" width="376" height="100" rx="14" fill="#141d36" stroke="#3987e5" stroke-width="1.5"/>
+  <text x="494" y="236" fill="#e6eaf5" font-size="20" font-weight="700">Daily cron · 00:00 IST</text>
+  <text x="494" y="266" fill="#b7c0d8" font-size="15">Refresh NAVs + news · log the run</text>
+
+  <rect x="474" y="320" width="376" height="120" rx="14" fill="#141d36" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="494" y="356" fill="#e6eaf5" font-size="20" font-weight="700">Weekly cron · Sat 11:00 IST</text>
+  <text x="494" y="386" fill="#b7c0d8" font-size="15">WoW · MoM · YTD vs benchmark vs similar</text>
+  <text x="494" y="412" fill="#b7c0d8" font-size="15">→ Gemini report → email · log the run</text>
+
+  <rect x="474" y="460" width="376" height="120" rx="14" fill="#141d36" stroke="#22b07d" stroke-width="1.5"/>
+  <text x="494" y="496" fill="#e6eaf5" font-size="20" font-weight="700">API routes</text>
+  <text x="494" y="526" fill="#b7c0d8" font-size="15">/api/funds · add / remove by scheme code</text>
+  <text x="494" y="552" fill="#b7c0d8" font-size="15">/api/dashboard · trend · returns · report/run</text>
+
+  <rect x="474" y="600" width="376" height="140" rx="14" fill="#141d36" stroke="#22b07d" stroke-width="1.5"/>
+  <text x="494" y="636" fill="#e6eaf5" font-size="20" font-weight="700">Dashboard (Meera's view)</text>
+  <text x="494" y="664" fill="#b7c0d8" font-size="15">Market tiles · verdict · fund table + status</text>
+  <text x="494" y="690" fill="#b7c0d8" font-size="15">12-week / 12-month / 1-year chart</text>
+  <text x="494" y="716" fill="#b7c0d8" font-size="15">"How to read this" guide · WhatsApp share</text>
+
+  <!-- ===== Supabase tables ===== -->
+  <g font-size="15">
+    <rect x="960" y="200" width="260" height="70" rx="12" fill="#141d36" stroke="#2a3a63"/>
+    <text x="980" y="229" fill="#e6eaf5" font-size="17" font-weight="700">funds</text>
+    <text x="980" y="252" fill="#8b95b3" font-size="13">tracked funds · benchmark · peers</text>
+
+    <rect x="960" y="284" width="260" height="70" rx="12" fill="#141d36" stroke="#2a3a63"/>
+    <text x="980" y="313" fill="#e6eaf5" font-size="17" font-weight="700">nav_history</text>
+    <text x="980" y="336" fill="#8b95b3" font-size="13">6 years of daily NAVs</text>
+
+    <rect x="960" y="368" width="260" height="70" rx="12" fill="#141d36" stroke="#2a3a63"/>
+    <text x="980" y="397" fill="#e6eaf5" font-size="17" font-weight="700">market_news</text>
+    <text x="980" y="420" fill="#8b95b3" font-size="13">the week's headlines</text>
+
+    <rect x="960" y="452" width="260" height="70" rx="12" fill="#141d36" stroke="#2a3a63"/>
+    <text x="980" y="481" fill="#e6eaf5" font-size="17" font-weight="700">weekly_snapshots</text>
+    <text x="980" y="504" fill="#8b95b3" font-size="13">multi-week trend history</text>
+
+    <rect x="960" y="536" width="260" height="70" rx="12" fill="#141d36" stroke="#2a3a63"/>
+    <text x="980" y="565" fill="#e6eaf5" font-size="17" font-weight="700">reports</text>
+    <text x="980" y="588" fill="#8b95b3" font-size="13">Gemini summaries + verdict</text>
+
+    <rect x="960" y="620" width="260" height="70" rx="12" fill="#141d36" stroke="#2a3a63"/>
+    <text x="980" y="649" fill="#e6eaf5" font-size="17" font-weight="700">job_log</text>
+    <text x="980" y="672" fill="#8b95b3" font-size="13">every automatic / manual run</text>
+  </g>
+
+  <!-- ===== AI, delivery, user ===== -->
+  <rect x="1310" y="190" width="250" height="140" rx="14" fill="#141d36" stroke="#9085e9" stroke-width="2"/>
+  <text x="1330" y="226" fill="#e6eaf5" font-size="20" font-weight="700">Gemini Flash</text>
+  <text x="1330" y="254" fill="#b7c0d8" font-size="15">Structured JSON report</text>
+  <text x="1330" y="279" fill="#b7c0d8" font-size="15">3 plain sentences per fund</text>
+  <text x="1330" y="304" fill="#b7c0d8" font-size="15">+ verdict with a reason</text>
+
+  <rect x="1310" y="370" width="250" height="100" rx="14" fill="#141d36" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="1330" y="404" fill="#e6eaf5" font-size="20" font-weight="700">Resend</text>
+  <text x="1330" y="432" fill="#b7c0d8" font-size="15">Saturday 11 AM email</text>
+  <text x="1330" y="455" fill="#8b95b3" font-size="13">ends with portfolio assessment</text>
+
+  <circle cx="1435" cy="570" r="66" fill="#13254a" stroke="#3987e5" stroke-width="2"/>
+  <text x="1435" y="566" fill="#e6eaf5" font-size="21" font-weight="700" text-anchor="middle">Meera</text>
+  <text x="1435" y="589" fill="#8b95b3" font-size="12" text-anchor="middle">non-finance investor</text>
+
+  <rect x="1310" y="660" width="250" height="90" rx="14" fill="#0f2a1e" stroke="#25D366" stroke-width="1.5"/>
+  <text x="1330" y="694" fill="#e6eaf5" font-size="19" font-weight="700">WhatsApp</text>
+  <text x="1330" y="720" fill="#b7c0d8" font-size="14">1200×630 share image</text>
+  <text x="1330" y="740" fill="#8b95b3" font-size="13">→ her CA friend</text>
+
+  <!-- ===== Arrows: ① nightly (blue) ===== -->
+  <g fill="none" stroke="#3987e5" stroke-width="2.5">
+    <path d="M354 255 L470 250" marker-end="url(#ab)"/>
+    <path d="M354 555 C 412 555, 412 282, 470 282" marker-end="url(#ab)"/>
+    <path d="M850 245 C 905 245, 905 319, 956 319" marker-end="url(#ab)"/>
+  </g>
+  <g fill="#7fb2f0" font-size="13" font-weight="600">
+    <text x="384" y="244">NAVs</text>
+    <text x="417" y="420">news</text>
+    <text x="856" y="236">save</text>
+  </g>
+
+  <!-- ===== Arrows: ② Saturday (amber) ===== -->
+  <g fill="none" stroke="#f59e0b" stroke-width="2.5">
+    <path d="M850 380 C 905 380, 905 487, 956 487" marker-end="url(#aa)"/>
+    <path d="M850 340 C 905 340, 920 320, 920 290 L 920 145 C 920 128, 932 120, 950 120 L 1395 120 C 1435 120, 1435 150, 1435 186" marker-end="url(#aa)"/>
+    <path d="M1310 268 C 1265 268, 1265 571, 1224 571" marker-end="url(#aa)"/>
+    <path d="M1435 330 L1435 366" marker-end="url(#aa)"/>
+    <path d="M1435 470 L1435 500" marker-end="url(#aa)"/>
+  </g>
+  <g fill="#f8c063" font-size="13" font-weight="600">
+    <text x="856" y="472">snapshot</text>
+    <text x="1080" y="111">returns + index moves + news</text>
+    <text x="1262" y="257">report</text>
+    <text x="1444" y="354">verdict</text>
+    <text x="1444" y="492">email</text>
+  </g>
+
+  <!-- ===== Arrows: ③ any time (teal) ===== -->
+  <g fill="none" stroke="#22b07d" stroke-width="2.5">
+    <path d="M354 410 C 412 410, 412 510, 470 510" marker-end="url(#at)"/>
+    <path d="M850 520 L936 520" marker-start="url(#at)" marker-end="url(#at)"/>
+    <path d="M1384 612 L 1278 612 C 1264 612, 1262 622, 1262 636 L 1262 786 C 1262 798, 1254 800, 1244 800 L 705 800 C 662 800, 662 780, 662 748" marker-end="url(#at)"/>
+    <path d="M560 744 L 560 825 C 560 841, 570 845, 590 845 L 1415 845 C 1431 845, 1435 838, 1435 756" marker-end="url(#at)"/>
+  </g>
+  <g fill="#6fd3ad" font-size="13" font-weight="600">
+    <text x="358" y="398">peers</text>
+    <text x="858" y="510">read · write</text>
+    <text x="880" y="792">opens the dashboard any time</text>
+    <text x="880" y="868">"Share on WhatsApp" → image for her CA friend</text>
+  </g>
+
+  <!-- ===== Legend ===== -->
+  <rect x="48" y="890" width="1504" height="62" rx="14" fill="#0e1528" stroke="#1e2a4a"/>
+  <g font-size="16">
+    <circle cx="80" cy="921" r="8" fill="#3987e5"/>
+    <text x="98" y="927" fill="#e6eaf5"><tspan font-weight="700">① Every night</tspan><tspan fill="#b7c0d8">  prices &amp; news saved</tspan></text>
+    <circle cx="470" cy="921" r="8" fill="#f59e0b"/>
+    <text x="488" y="927" fill="#e6eaf5"><tspan font-weight="700">② Every Saturday</tspan><tspan fill="#b7c0d8">  compare → Gemini explains → email</tspan></text>
+    <circle cx="990" cy="921" r="8" fill="#22b07d"/>
+    <text x="1008" y="927" fill="#e6eaf5"><tspan font-weight="700">③ Any time</tspan><tspan fill="#b7c0d8">  dashboard · add/remove by code · share</tspan></text>
+  </g>
+  <text x="48" y="980" fill="#5b6585" font-size="13">AI: Gemini Flash only · Hosting: Vercel (cron jobs) · Database: Supabase · Data: mfapi.in, AMFI, NewsData.io · Email: Resend</text>
+</svg>

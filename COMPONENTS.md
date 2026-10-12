@@ -3,6 +3,10 @@
 **Fund Pulse**: a weekly mutual fund tracker for Meera (Problem Statement 19).
 Live: https://mf-tracker-delta.vercel.app · Repo: https://github.com/snehaiyer-beep/mf-tracker
 
+![Fund Pulse components map](docs/components-map.png)
+
+<details><summary>Same map as a Mermaid diagram</summary>
+
 ```mermaid
 flowchart LR
   USER(("Meera"))
@@ -56,6 +60,8 @@ flowchart LR
   WEEKLY --> T6
   WEEKLY --> RESEND --> USER
 ```
+
+</details>
 
 ## Components
 
