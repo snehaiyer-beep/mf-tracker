@@ -57,4 +57,4 @@ flowchart LR
 | **Weekly cron** | Computes WoW/MoM/YTD for each fund vs benchmark vs category, gets index moves, calls Gemini, saves the report, sends the email. |
 | **Gemini Flash** | Writes a 3-sentence plain-language summary per fund plus one verdict: *No action needed / One fund worth watching / Consider reviewing your allocation*. |
 | **Resend** | Delivers the Saturday-morning email. |
-| **Dashboard** | "Last updated" strip, add or remove a fund by scheme code (or name search), latest returns with status labels, growth chart (week / month / year), beginner guide sidebar, past reports, manual run. |
+| **Dashboard** | "Last updated" strip, add or remove a fund by scheme code (or name search), latest returns with status labels, chart: last 12 weeks or months as bars, 1-year growth line, beginner guide sidebar, past reports, manual run. |

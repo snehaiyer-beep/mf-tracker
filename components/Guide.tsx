@@ -153,18 +153,25 @@ function GuideBody(props: Props) {
           <p>The squiggly line is the fund&apos;s price over the last 90 days.</p>
         </Section>
 
-        <Section title="Reading the growth chart">
+        <Section title="Reading the chart">
           <p>
-            Pick a fund, then <span className="text-ink">Week</span>, <span className="text-ink">Month</span> or <span className="text-ink">Year</span>{" "}
-            to see how it grew over that time. All lines start at 0% on the first day, so the higher line grew more.
+            <span className="text-ink">Week</span>: one group of bars for each of the last 12 weeks. A bar above the middle line means it went up that
+            week; below means it went down.
           </p>
           <p>
-            <span style={{ color: "var(--series-fund)" }}>Blue</span> is your fund,{" "}
+            <span className="text-ink">Month</span>: the same, for each of the last 12 months.
+          </p>
+          <p>
+            <span className="text-ink">Year</span>: a line showing how ₹100 put in a year ago would have grown. All lines start at 0%, so the higher line
+            grew more.
+          </p>
+          <p>
+            In every view, <span style={{ color: "var(--series-fund)" }}>blue</span> is your fund,{" "}
             <span style={{ color: "var(--series-index)" }}>orange</span> is the market, <span style={{ color: "var(--series-cat)" }}>green</span> is
             similar funds.
           </p>
           <p>
-            <span className="text-ink">What to look for:</span> lines moving together means all is normal. Blue sitting <em>below</em> green for months is
+            <span className="text-ink">What to look for:</span> blue moving with the others means all is normal. Blue staying <em>below</em> green week after week is
             worth a conversation. One bad week is not.
           </p>
         </Section>
