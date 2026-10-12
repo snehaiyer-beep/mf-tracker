@@ -41,7 +41,7 @@ create table if not exists weekly_snapshots (
 
 create table if not exists reports (
   id             bigserial primary key,
-  week_ending    date not null unique,
+  week_ending    date not null,       -- several reports per week are kept (re-generations)
   market_context jsonb,
   report         jsonb,
   verdict        text,
@@ -81,3 +81,7 @@ create table if not exists job_log (
 );
 create index if not exists job_log_ran_at on job_log (ran_at desc);
 alter table job_log enable row level security;
+
+-- Added later: keep every generated report, not one per week.
+alter table reports drop constraint if exists reports_week_ending_key;
+create index if not exists reports_created_at on reports (created_at desc);

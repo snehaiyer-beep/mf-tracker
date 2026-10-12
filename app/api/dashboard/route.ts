@@ -45,8 +45,8 @@ export async function GET() {
       db()
         .from("reports")
         .select("id, week_ending, verdict, report, email_sent, created_at")
-        .order("week_ending", { ascending: false })
-        .limit(20),
+        .order("created_at", { ascending: false })
+        .limit(30),
       loadSeries([...funds.map((f) => f.scheme_code), ...MARKET_INDICES.map((b) => b.code)], since),
       db().from("job_log").select("job, trigger, ran_at, ok, detail").order("ran_at", { ascending: false }).limit(12),
       db().from("market_news").select("published_at").order("published_at", { ascending: false }).limit(1).maybeSingle(),

@@ -91,25 +91,20 @@ async function weekly(trigger: Trigger, sendEmail: boolean) {
   const report = await generateReport(input);
   const marketContext = { index_moves: indexMoves, news: news.slice(0, 15) };
 
-  const { error: repErr } = await db().from("reports").upsert(
-    {
-      week_ending: asOf,
-      market_context: marketContext,
-      report,
-      verdict: report.verdict,
-      email_sent: false,
-      created_at: new Date().toISOString(),
-    },
-    { onConflict: "week_ending" },
-  );
-  if (repErr) throw new Error(`Saving report failed: ${repErr.message}`);
+  // Every run is kept as its own row, so re-generating a week adds to the history instead of replacing it.
+  const { data: saved, error: repErr } = await db()
+    .from("reports")
+    .insert({ week_ending: asOf, market_context: marketContext, report, verdict: report.verdict, email_sent: false })
+    .select("id")
+    .single();
+  if (repErr || !saved) throw new Error(`Saving report failed: ${repErr?.message ?? "no row returned"}`);
 
   let emailError: string | null = null;
   if (sendEmail) {
     try {
       const html = renderReportEmail({ asOf, funds, snapshots, report, indexMoves, news });
       await sendReportEmail(`Fund update (${asOf}): ${report.verdict}`, html);
-      await db().from("reports").update({ email_sent: true }).eq("week_ending", asOf);
+      await db().from("reports").update({ email_sent: true }).eq("id", saved.id);
     } catch (err) {
       emailError = errorMessage(err);
       console.error(err);

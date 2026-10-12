@@ -24,13 +24,17 @@ const DOT: Record<string, string> = {
   "Consider reviewing your allocation": "bg-down",
 };
 
+const generatedAt = (iso: string) =>
+  new Date(iso).toLocaleString("en-IN", { weekday: "short", day: "numeric", month: "short", hour: "numeric", minute: "2-digit", timeZone: "Asia/Kolkata" });
+
 export function Reports({ reports, funds }: { reports: ReportRow[]; funds: Fund[] }) {
   const [openId, setOpenId] = useState<number | null>(null);
   const nameByCode = new Map(funds.map((f) => [f.scheme_code, prettyName(f.name)]));
 
   return (
     <section className="panel">
-      <h2 className="mb-3 text-base font-semibold">Past reports</h2>
+      <h2 className="mb-1 text-base font-semibold">Past reports{reports.length > 0 ? ` (${reports.length})` : ""}</h2>
+      <p className="mb-3 text-[11px] text-faint">Every report is kept, newest first, including re-generated ones.</p>
       {reports.length === 0 ? (
         <p className="text-sm text-muted">Nothing yet.</p>
       ) : (
@@ -45,7 +49,13 @@ export function Reports({ reports, funds }: { reports: ReportRow[]; funds: Fund[
                 >
                   <span className="flex min-w-0 items-center gap-2">
                     <span className={`h-2 w-2 shrink-0 rounded-full ${DOT[r.verdict ?? ""] ?? "bg-faint"}`} />
-                    <span className="truncate text-sm">{r.week_ending}</span>
+                    <span className="min-w-0">
+                      <span className="block truncate text-sm">
+                        Week ending {r.week_ending}
+                        {r === reports[0] && <span className="ml-1.5 rounded bg-accent/15 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-sky-300">Latest</span>}
+                      </span>
+                      <span className="block text-[11px] text-faint">Generated {generatedAt(r.created_at)}</span>
+                    </span>
                   </span>
                   <span className="shrink-0 text-[11px] text-muted">
                     {r.verdict ?? "—"} {r.email_sent ? "· ✉" : ""}
