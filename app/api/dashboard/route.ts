@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { MARKET_INDICES } from "@/lib/benchmarks";
-import { addDays, addMonths, previousYearEnd, todayIST } from "@/lib/dates";
+import { addDays, addMonths, lastFridayOnOrBefore, previousYearEnd, todayIST } from "@/lib/dates";
 import { listFunds } from "@/lib/funds";
 import { errorMessage } from "@/lib/http";
 import type { NavPoint } from "@/lib/mfapi";
@@ -66,9 +66,12 @@ export async function GET() {
     const latest: Record<number, Snapshot> = {};
     for (const s of snapshots) latest[s.scheme_code] = s; // ascending, so last wins
 
+    // "This week" everywhere on the dashboard = the same Friday-to-Friday week as the fund table and report.
+    const latestNav = funds.map((f) => series.get(f.scheme_code)?.at(-1)?.date).filter(Boolean).sort().pop() ?? today;
+    const weekEnding = lastFridayOnOrBefore(latestNav);
     const indices = MARKET_INDICES.map((b) => {
       const s = series.get(b.code) ?? [];
-      return { name: b.name, ...computeReturns(s, today), spark: spark(s, today), as_of: s.at(-1)?.date ?? null };
+      return { name: b.name, ...computeReturns(s, weekEnding), spark: spark(s, today), as_of: weekEnding };
     });
     const sparks: Record<number, number[]> = {};
     for (const f of funds) sparks[f.scheme_code] = spark(series.get(f.scheme_code) ?? [], today);

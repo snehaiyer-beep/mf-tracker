@@ -15,6 +15,9 @@ const BLURB: Record<string, string> = {
   "Nifty Smallcap 100": "Smaller companies",
 };
 
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const weekLabel = (d: string) => `Fri ${Number(d.slice(8, 10))} ${MONTHS[Number(d.slice(5, 7)) - 1]}`;
+
 export function IndexTiles({ indices }: { indices: IndexStat[] }) {
   return (
     <section className="grid gap-3 sm:grid-cols-3">
@@ -29,7 +32,7 @@ export function IndexTiles({ indices }: { indices: IndexStat[] }) {
           </div>
           <div className="mt-3 flex items-end justify-between gap-2">
             <div>
-              <div className="label mb-0.5">This week</div>
+              <div className="label mb-0.5">{ix.as_of ? `Week to ${weekLabel(ix.as_of)}` : "This week"}</div>
               <Pct value={ix.wow} size="lg" />
             </div>
             <Sparkline values={ix.spark} width={110} height={36} color="var(--series-index)" />

@@ -125,14 +125,14 @@ export function ShareCard(props: Props) {
           style={{
             width: 1200,
             height: 630,
-            padding: 48,
+            padding: "40px 48px",
             boxSizing: "border-box",
             background: "radial-gradient(900px 400px at 0% 0%, rgba(57,135,229,0.25), transparent 60%), #0b1122",
             color: "#e6eaf5",
             fontFamily: "Inter, Segoe UI, Roboto, sans-serif",
             display: "flex",
             flexDirection: "column",
-            gap: 22,
+            gap: 16,
           }}
         >
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
@@ -141,13 +141,13 @@ export function ShareCard(props: Props) {
           </div>
 
           {verdict && (
-            <div style={{ border: `2px solid ${VERDICT_COLOR[verdict] ?? "#3987e5"}`, borderRadius: 18, padding: "16px 22px", background: "rgba(255,255,255,0.03)" }}>
+            <div style={{ border: `2px solid ${VERDICT_COLOR[verdict] ?? "#3987e5"}`, borderRadius: 18, padding: "14px 22px", background: "rgba(255,255,255,0.03)" }}>
               <div style={{ fontSize: 28, fontWeight: 700, color: VERDICT_COLOR[verdict] ?? "#e6eaf5" }}>{verdict}</div>
-              <div style={{ fontSize: 19, color: "#c4cbe0", marginTop: 6, lineHeight: 1.35 }}>{report?.report?.reason}</div>
+              <div style={{ fontSize: 18, color: "#c4cbe0", marginTop: 6, lineHeight: 1.35 }}>{report?.report?.reason}</div>
             </div>
           )}
 
-          <div style={{ display: "flex", flexDirection: "column", gap: 8, flex: 1 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
             <div style={{ display: "flex", fontSize: 16, color: "#8b95b3", textTransform: "uppercase", letterSpacing: 1 }}>
               <div style={{ flex: 1 }}>Fund</div>
               <div style={{ width: 170, textAlign: "right" }}>This week</div>
@@ -158,7 +158,7 @@ export function ShareCard(props: Props) {
               const s = latest[f.scheme_code];
               const st = fundStatus(s);
               return (
-                <div key={f.scheme_code} style={{ display: "flex", alignItems: "center", fontSize: 22, padding: "8px 0", borderTop: "1px solid #1e2a4a" }}>
+                <div key={f.scheme_code} style={{ display: "flex", alignItems: "center", fontSize: 21, padding: "7px 0", borderTop: "1px solid #1e2a4a" }}>
                   <div style={{ flex: 1, fontWeight: 600 }}>
                     {prettyName(f.name)}
                     {watch.has(f.scheme_code) ? "  👀" : ""}
@@ -171,9 +171,9 @@ export function ShareCard(props: Props) {
             })}
           </div>
 
-          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 18, color: "#8b95b3" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", fontSize: 17, color: "#8b95b3", whiteSpace: "nowrap", marginTop: "auto" }}>
             <div>
-              Market this week:{" "}
+              Market, same week:{" "}
               {indices.map((i, n) => (
                 <span key={i.name}>
                   {n > 0 ? " · " : ""}
