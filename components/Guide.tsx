@@ -140,7 +140,12 @@ function GuideBody(props: Props) {
 
         <Section title="Reading the fund table">
           <p>
-            <span className="text-ink">Week / Month / Since Jan</span>: how much the fund grew or shrank over that time.
+            <span className="text-ink">Week / Month / Since Jan / 1 Year</span>: how much the fund grew or shrank over that time. &quot;1 Year&quot; is the
+            last 12 months.
+          </p>
+          <p>
+            Use the <span className="text-ink">year picker</span> on the &quot;Since Jan&quot; column to see any full past year (back to 2021). It&apos;s a
+            good way to see that bad years and good years both happen.
           </p>
           <p>
             Under each number: <span style={{ color: "var(--series-index)" }}>● Index</span> is the market your fund is compared with, and{" "}

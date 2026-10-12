@@ -51,3 +51,11 @@ export function average(values: (number | null)[]): number | null {
   if (nums.length === 0) return null;
   return round2(nums.reduce((a, b) => a + b, 0) / nums.length);
 }
+
+/** % change between the NAVs on (or just before) two dates; null if either is missing. */
+export function changeBetween(series: NavPoint[], from: string, to: string): number | null {
+  const base = getNavOnOrBefore(series, from);
+  const now = getNavOnOrBefore(series, to);
+  if (!base || !now || base.date === now.date) return null;
+  return round2(pctChange(now.nav, base.nav));
+}

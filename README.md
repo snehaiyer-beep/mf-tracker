@@ -30,7 +30,7 @@ npm install
 npm run dev                  # http://localhost:3000
 ```
 
-Add a fund from the page (search by name, click it). Adding a fund saves it, picks the benchmark proxy and 10 peers, and backfills two years of NAVs plus 52 weekly snapshots for all of them (~20–40 s).
+Add a fund from the page (search by name, click it). Adding a fund saves it, picks the benchmark proxy and 10 peers, and backfills six years of NAVs plus 52 weekly snapshots for all of them (~20–40 s).
 
 Optional CLI backfill / bulk add:
 

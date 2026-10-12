@@ -38,18 +38,14 @@ export async function syncMany(codes: number[], days: number, concurrency = 4): 
   return summary;
 }
 
-/** Load NAV series (ascending) for many codes from `since` onwards. */
-export async function loadSeries(codes: number[], since: string): Promise<Map<number, NavPoint[]>> {
+/** Load NAV series (ascending) for many codes from `since` (to `until`, if given). Max ~1000 rows per code. */
+export async function loadSeries(codes: number[], since: string, until?: string): Promise<Map<number, NavPoint[]>> {
   const map = new Map<number, NavPoint[]>();
   const unique = Array.from(new Set(codes));
   const results = await mapLimit(unique, 8, async (code) => {
-    const { data, error } = await db()
-      .from("nav_history")
-      .select("date, nav")
-      .eq("scheme_code", code)
-      .gte("date", since)
-      .order("date", { ascending: true })
-      .limit(1000);
+    let query = db().from("nav_history").select("date, nav").eq("scheme_code", code).gte("date", since);
+    if (until) query = query.lte("date", until);
+    const { data, error } = await query.order("date", { ascending: true }).limit(1000);
     if (error) throw new Error(error.message);
     return (data ?? []).map((r) => ({ date: String(r.date), nav: Number(r.nav) }));
   });

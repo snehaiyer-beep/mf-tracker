@@ -5,8 +5,8 @@ import { syncMany, type SyncSummary } from "./nav";
 import { backfillSnapshots } from "./snapshots";
 import { db, type Fund } from "./supabase";
 
-// ~2 years: 52 weeks of trend snapshots, each needing the previous December for "since Jan".
-export const BACKFILL_DAYS = 800;
+// ~6 years: calendar-year returns back to 2021 (each needs the previous December), plus trend snapshots.
+export const BACKFILL_DAYS = 2200;
 
 export async function listFunds(): Promise<Fund[]> {
   const { data, error } = await db()
