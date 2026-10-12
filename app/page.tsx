@@ -8,6 +8,7 @@ import { api } from "@/components/format";
 import { IndexTiles, type IndexStat } from "@/components/IndexTiles";
 import { LastUpdated, type Updates } from "@/components/LastUpdated";
 import { Reports, type ReportRow } from "@/components/Reports";
+import { ShareCard } from "@/components/ShareCard";
 import { TrendChart } from "@/components/TrendChart";
 import { Verdict } from "@/components/Verdict";
 import type { Fund, Snapshot } from "@/lib/supabase";
@@ -105,6 +106,13 @@ export default function Home() {
                 <IndexTiles indices={data.indices} />
               </div>
               <Verdict report={latestReport} funds={data.funds} />
+              <section className="panel flex flex-wrap items-center justify-between gap-3 py-3">
+                <div>
+                  <div className="text-sm font-semibold">Send this week to your CA friend</div>
+                  <div className="text-xs text-muted">One clean picture of the week, instead of NAV screenshots.</div>
+                </div>
+                <ShareCard funds={data.funds} latest={data.latest} indices={data.indices} report={latestReport} />
+              </section>
               <FundGrid funds={data.funds} latest={data.latest} sparks={data.sparks} summaries={summaries} watched={watched} />
               <div className="grid gap-4 xl:grid-cols-3">
                 <div className="xl:col-span-2">

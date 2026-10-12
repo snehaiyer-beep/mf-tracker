@@ -20,7 +20,7 @@ export async function POST() {
     if (data?.created_at && Date.now() - new Date(data.created_at).getTime() < COOLDOWN_MS) {
       return NextResponse.json({ error: "A report was just generated. Try again in a couple of minutes." }, { status: 429 });
     }
-    return NextResponse.json(await runWeekly());
+    return NextResponse.json(await runWeekly({ trigger: "dashboard" }));
   } catch (err) {
     console.error("Manual report failed", err);
     return NextResponse.json({ error: errorMessage(err) }, { status: 500 });

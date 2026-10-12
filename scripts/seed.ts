@@ -10,7 +10,7 @@ import { config } from "dotenv";
 config({ path: ".env.local" });
 config();
 
-import { ALL_BENCHMARKS } from "../lib/benchmarks";
+import { MARKET_INDICES } from "../lib/benchmarks";
 import { addFund, BACKFILL_DAYS, listFunds } from "../lib/funds";
 import { syncMany } from "../lib/nav";
 import { backfillSnapshots } from "../lib/snapshots";
@@ -31,7 +31,7 @@ async function main() {
   const funds = await listFunds();
   const all = [
     ...funds.flatMap((f) => [f.scheme_code, ...(f.peer_codes ?? []), ...(f.benchmark_code ? [f.benchmark_code] : [])]),
-    ...ALL_BENCHMARKS.map((b) => b.code),
+    ...MARKET_INDICES.map((b) => b.code),
   ];
   console.log(`Backfilling ${new Set(all).size} schemes for ${funds.length} funds…`);
   const summary = await syncMany(all, BACKFILL_DAYS, 4);

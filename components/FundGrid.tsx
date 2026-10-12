@@ -24,7 +24,7 @@ function Cell({ v, fund }: { v: Trio; fund: Fund }) {
         {fund.benchmark_name && (
           <div className="flex items-center gap-1.5">
             <span className="h-2 w-2 rounded-full" style={{ background: "var(--series-index)" }} />
-            Index <Pct value={v.index} />
+            Benchmark <Pct value={v.index} />
           </div>
         )}
         <div className="flex items-center gap-1.5">
@@ -164,7 +164,10 @@ export function FundGrid({
                         </div>
                         <div className="mt-1 pl-[18px] text-[11px] text-faint">
                           {f.category?.replace(/^.*? - /, "") ?? "—"} · {f.scheme_code}
-                          {!f.benchmark_name && " · no matching index"}
+                        </div>
+                        <div className="pl-[18px] text-[11px] text-faint" title={f.benchmark_name ? `Measured using an index fund that tracks ${f.benchmark_name}` : undefined}>
+                          Benchmark: {f.stated_benchmark ?? f.benchmark_name ?? "none"}
+                          {f.benchmark_name ? ` · measured with a ${f.benchmark_name} index fund` : ""}
                         </div>
                         {status && <div className="mt-1 pl-[18px] text-[11px] text-muted">{status.hint}</div>}
                         {summary && (

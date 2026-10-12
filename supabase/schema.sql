@@ -4,6 +4,7 @@ create table if not exists funds (
   scheme_code     integer primary key,
   name            text not null,
   category        text,
+  stated_benchmark text,
   benchmark_code  integer,
   benchmark_name  text,
   peer_codes      jsonb not null default '[]'::jsonb,
@@ -64,3 +65,19 @@ create table if not exists job_runs (
   detail  jsonb
 );
 alter table job_runs enable row level security;
+
+-- Added later: run this if your funds table predates stated_benchmark.
+alter table funds add column if not exists stated_benchmark text;
+
+-- Every daily/weekly run (scheduled by Vercel Cron, manual, or the dashboard button), newest first.
+-- Shown on the dashboard as "Automation history". Supersedes job_runs, which only kept the last run.
+create table if not exists job_log (
+  id      bigserial primary key,
+  job     text not null,             -- 'daily' | 'weekly'
+  trigger text not null,             -- 'scheduled' | 'manual' | 'dashboard'
+  ran_at  timestamptz not null default now(),
+  ok      boolean not null,
+  detail  jsonb
+);
+create index if not exists job_log_ran_at on job_log (ran_at desc);
+alter table job_log enable row level security;

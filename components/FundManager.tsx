@@ -123,7 +123,7 @@ export function FundManager({ funds, onChange }: { funds: Fund[]; onChange: () =
               <div className="text-sm font-medium">{f.name}</div>
               <div className="text-xs text-muted">
                 {f.category ?? "Unknown category"} ·{" "}
-                {f.benchmark_name ? `${f.benchmark_name} (proxy)` : "no matching index"} · {f.peer_codes?.length ?? 0} similar funds
+                benchmark {f.stated_benchmark ?? f.benchmark_name ?? "none"} · {f.peer_codes?.length ?? 0} similar funds
               </div>
             </div>
             <button className="btn-ghost shrink-0" disabled={busyCode !== null} onClick={() => remove(f.scheme_code)}>

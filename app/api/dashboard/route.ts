@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { ALL_BENCHMARKS } from "@/lib/benchmarks";
+import { MARKET_INDICES } from "@/lib/benchmarks";
 import { addDays, addMonths, previousYearEnd, todayIST } from "@/lib/dates";
 import { listFunds } from "@/lib/funds";
 import { errorMessage } from "@/lib/http";
@@ -47,8 +47,8 @@ export async function GET() {
         .select("id, week_ending, verdict, report, email_sent, created_at")
         .order("week_ending", { ascending: false })
         .limit(20),
-      loadSeries([...funds.map((f) => f.scheme_code), ...ALL_BENCHMARKS.map((b) => b.code)], since),
-      db().from("job_runs").select("job, ran_at, ok"),
+      loadSeries([...funds.map((f) => f.scheme_code), ...MARKET_INDICES.map((b) => b.code)], since),
+      db().from("job_log").select("job, trigger, ran_at, ok, detail").order("ran_at", { ascending: false }).limit(12),
       db().from("market_news").select("published_at").order("published_at", { ascending: false }).limit(1).maybeSingle(),
     ]);
     if (snaps.error) throw new Error(snaps.error.message);
@@ -66,14 +66,15 @@ export async function GET() {
     const latest: Record<number, Snapshot> = {};
     for (const s of snapshots) latest[s.scheme_code] = s; // ascending, so last wins
 
-    const indices = ALL_BENCHMARKS.map((b) => {
+    const indices = MARKET_INDICES.map((b) => {
       const s = series.get(b.code) ?? [];
       return { name: b.name, ...computeReturns(s, today), spark: spark(s, today), as_of: s.at(-1)?.date ?? null };
     });
     const sparks: Record<number, number[]> = {};
     for (const f of funds) sparks[f.scheme_code] = spark(series.get(f.scheme_code) ?? [], today);
 
-    const ranAt = (job: string) => (runs.data ?? []).find((r) => r.job === job)?.ran_at ?? null;
+    const history = runs.data ?? [];
+    const ranAt = (job: string) => history.find((r) => r.job === job)?.ran_at ?? null;
     const updates = {
       prices_as_of: funds.map((f) => series.get(f.scheme_code)?.at(-1)?.date).filter(Boolean).sort().pop() ?? null,
       latest_news_at: latestNews.data?.published_at ?? null,
@@ -81,6 +82,7 @@ export async function GET() {
       report_at: reports.data?.[0]?.created_at ?? ranAt("weekly"),
       next_daily: nextIST(0, 0),
       next_report: nextIST(11, 0, 6),
+      history,
     };
 
     return NextResponse.json({ funds, snapshots, latest, reports: reports.data ?? [], indices, sparks, updates });

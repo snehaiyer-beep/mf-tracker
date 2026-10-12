@@ -21,22 +21,23 @@ export async function listFunds(): Promise<Fund[]> {
 /** Validate a scheme code, auto-fill details, pick benchmark + peers, save, and backfill NAVs. */
 export async function addFund(code: number): Promise<{ fund: Fund; backfill: SyncSummary }> {
   const scheme = await fetchScheme(code); // throws if invalid
-  const benchmark = pickBenchmark(scheme.category, scheme.name);
+  const { stated, proxy } = pickBenchmark(scheme.category, scheme.name);
   const peers = await pickPeers(scheme.category, code);
 
   const fund: Fund = {
     scheme_code: code,
     name: scheme.name,
     category: scheme.category || null,
-    benchmark_code: benchmark?.code ?? null,
-    benchmark_name: benchmark?.name ?? null,
+    stated_benchmark: stated,
+    benchmark_code: proxy?.code ?? null,
+    benchmark_name: proxy?.name ?? null,
     peer_codes: peers,
     is_active: true,
   };
   const { error } = await db().from("funds").upsert(fund, { onConflict: "scheme_code" });
   if (error) throw new Error(`Saving fund failed: ${error.message}`);
 
-  const codes = [code, ...peers, ...(benchmark ? [benchmark.code] : [])];
+  const codes = [code, ...peers, ...(proxy ? [proxy.code] : [])];
   const backfill = await syncMany(codes, BACKFILL_DAYS);
   try {
     await backfillSnapshots([fund]); // a year of weekly points for the trend chart

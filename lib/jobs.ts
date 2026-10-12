@@ -1,4 +1,4 @@
-import { ALL_BENCHMARKS } from "./benchmarks";
+import { MARKET_INDICES } from "./benchmarks";
 import { lastFridayOnOrBefore, todayIST } from "./dates";
 import { renderReportEmail, sendReportEmail } from "./email";
 import { listFunds } from "./funds";
@@ -10,28 +10,53 @@ import { computeReturns } from "./returns";
 import { computeSnapshots, historyStart, saveSnapshots, trackedCodes } from "./snapshots";
 import { db } from "./supabase";
 
-/** Record when a job ran, for the dashboard's "Last updated" panel. Never fails the job. */
-async function recordRun(job: "daily" | "weekly", ok: boolean, detail: unknown) {
+export type Trigger = "scheduled" | "manual" | "dashboard";
+
+/** Vercel Cron identifies itself with a "vercel-cron" user agent; anything else with the secret is manual. */
+export function triggerFrom(req: Request): Trigger {
+  return (req.headers.get("user-agent") ?? "").includes("vercel-cron") ? "scheduled" : "manual";
+}
+
+/** Log a run for the dashboard's "Last updated" strip and "Automation history". Never fails the job. */
+async function logRun(job: "daily" | "weekly", trigger: Trigger, ok: boolean, detail: unknown) {
   try {
-    await db().from("job_runs").upsert({ job, ran_at: new Date().toISOString(), ok, detail }, { onConflict: "job" });
+    const { error } = await db().from("job_log").insert({ job, trigger, ok, detail });
+    if (error) console.error("Logging job run failed", error.message);
   } catch (err) {
-    console.error("Recording job run failed", err);
+    console.error("Logging job run failed", err);
   }
 }
 
 /** Daily: refresh the last 30 days of NAVs for everything we track, then store today's news. */
-export async function runDaily() {
-  const funds = await listFunds();
-  const navs = await syncMany(trackedCodes(funds), 30, 6);
-  const news = await refreshNews();
-  const result = { funds: funds.length, navs, news };
-  await recordRun("daily", navs.failed.length === 0, { navs_ok: navs.ok, navs_failed: navs.failed.length, news_source: news.source, news_stored: news.stored });
-  return result;
+export async function runDaily(trigger: Trigger) {
+  try {
+    const funds = await listFunds();
+    const navs = await syncMany(trackedCodes(funds), 30, 6);
+    const news = await refreshNews();
+    await logRun("daily", trigger, navs.failed.length === 0, {
+      navs_ok: navs.ok,
+      navs_failed: navs.failed.length,
+      news_source: news.source,
+      news_stored: news.stored,
+    });
+    return { funds: funds.length, navs, news };
+  } catch (err) {
+    await logRun("daily", trigger, false, { error: errorMessage(err) });
+    throw err;
+  }
 }
 
 /** Weekly: compute snapshots, ask Gemini for a summary, save the report and email it. */
-export async function runWeekly(opts: { sendEmail?: boolean } = {}) {
-  const sendEmail = opts.sendEmail ?? true;
+export async function runWeekly(opts: { trigger: Trigger; sendEmail?: boolean }) {
+  try {
+    return await weekly(opts.trigger, opts.sendEmail ?? true);
+  } catch (err) {
+    await logRun("weekly", opts.trigger, false, { error: errorMessage(err) });
+    throw err;
+  }
+}
+
+async function weekly(trigger: Trigger, sendEmail: boolean) {
   // Reports are labelled by the week's last trading day (Friday), so reruns land on the same week.
   const asOf = lastFridayOnOrBefore(todayIST());
   const funds = await listFunds();
@@ -43,7 +68,7 @@ export async function runWeekly(opts: { sendEmail?: boolean } = {}) {
   const snapshots = computeSnapshots(funds, asOf, series);
   await saveSnapshots(snapshots);
 
-  const indexMoves = ALL_BENCHMARKS.map((b) => ({ index: b.name, wow: ret(b.code).wow }));
+  const indexMoves = MARKET_INDICES.map((b) => ({ index: b.name, wow: ret(b.code).wow }));
   const news = await recentNews(7, 40);
 
   const input: ReportInput = {
@@ -55,7 +80,7 @@ export async function runWeekly(opts: { sendEmail?: boolean } = {}) {
         name: f.name,
         category: f.category,
         fund: { wow: s.wow, mom: s.mom, ytd: s.ytd },
-        benchmark: { name: f.benchmark_name, wow: s.bench_wow, mom: s.bench_mom, ytd: s.bench_ytd },
+        benchmark: { name: f.stated_benchmark ?? f.benchmark_name, wow: s.bench_wow, mom: s.bench_mom, ytd: s.bench_ytd },
         category_average: { wow: s.cat_wow, mom: s.cat_mom, ytd: s.cat_ytd },
       };
     }),
@@ -91,6 +116,6 @@ export async function runWeekly(opts: { sendEmail?: boolean } = {}) {
     }
   }
 
-  await recordRun("weekly", !emailError, { as_of: asOf, verdict: report.verdict, email_sent: sendEmail && !emailError });
+  await logRun("weekly", trigger, !emailError, { as_of: asOf, verdict: report.verdict, email_sent: sendEmail && !emailError, email_error: emailError });
   return { as_of: asOf, funds: funds.length, verdict: report.verdict, email_sent: sendEmail && !emailError, email_error: emailError };
 }

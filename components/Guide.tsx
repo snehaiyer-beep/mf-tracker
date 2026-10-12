@@ -148,7 +148,7 @@ function GuideBody(props: Props) {
             good way to see that bad years and good years both happen.
           </p>
           <p>
-            Under each number: <span style={{ color: "var(--series-index)" }}>● Index</span> is the market your fund is compared with, and{" "}
+            Under each number: <span style={{ color: "var(--series-index)" }}>● Benchmark</span> is the index your fund says it tries to beat (its &quot;stated benchmark&quot;, e.g. NIFTY Smallcap 250 for a small-company fund), and{" "}
             <span style={{ color: "var(--series-cat)" }}>● Similar</span> is the average of 10 funds of the same type.
           </p>
           <p>
@@ -172,7 +172,7 @@ function GuideBody(props: Props) {
           </p>
           <p>
             In every view, <span style={{ color: "var(--series-fund)" }}>blue</span> is your fund,{" "}
-            <span style={{ color: "var(--series-index)" }}>orange</span> is the market, <span style={{ color: "var(--series-cat)" }}>green</span> is
+            <span style={{ color: "var(--series-index)" }}>orange</span> is its benchmark, <span style={{ color: "var(--series-cat)" }}>green</span> is
             similar funds.
           </p>
           <p>

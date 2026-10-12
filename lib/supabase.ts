@@ -19,6 +19,9 @@ export type Fund = {
   scheme_code: number;
   name: string;
   category: string | null;
+  /** The index the fund measures itself against, e.g. "NIFTY Smallcap 250 TRI". */
+  stated_benchmark: string | null;
+  /** Index fund used as a stand-in for that benchmark (benchmark_name is the index it tracks). */
   benchmark_code: number | null;
   benchmark_name: string | null;
   peer_codes: number[];

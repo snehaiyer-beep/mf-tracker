@@ -1,4 +1,4 @@
-import { ALL_BENCHMARKS } from "./benchmarks";
+import { MARKET_INDICES } from "./benchmarks";
 import { addDays, addMonths, lastFridayOnOrBefore, previousYearEnd, todayIST } from "./dates";
 import type { NavPoint } from "./mfapi";
 import { loadSeries } from "./nav";
@@ -11,7 +11,7 @@ export function trackedCodes(funds: Fund[]): number[] {
     ...funds.map((f) => f.scheme_code),
     ...funds.flatMap((f) => f.peer_codes ?? []),
     ...funds.map((f) => f.benchmark_code).filter((c): c is number => c !== null),
-    ...ALL_BENCHMARKS.map((b) => b.code),
+    ...MARKET_INDICES.map((b) => b.code),
   ];
 }
 

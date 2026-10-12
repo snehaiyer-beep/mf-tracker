@@ -20,7 +20,7 @@ Track your mutual funds weekly against a market index (proxy) and the average of
 
 ## 2. Create the database
 
-Supabase dashboard → **SQL Editor → New query** → paste all of [`supabase/schema.sql`](supabase/schema.sql) → **Run**. You should see 5 tables under **Table Editor**.
+Supabase dashboard → **SQL Editor → New query** → paste all of [`supabase/schema.sql`](supabase/schema.sql) → **Run**. You should see the tables (funds, nav_history, market_news, weekly_snapshots, reports, job_log) under **Table Editor**.
 
 ## 3. Run locally
 
@@ -62,8 +62,18 @@ curl -H "Authorization: Bearer $CRON_SECRET" http://localhost:3000/api/cron/week
 ## How numbers are calculated
 
 - **Returns:** `% = (current / past − 1) × 100`. WoW = vs 7 days ago, MoM = vs 1 month ago, YTD = vs last NAV of previous December. `getNavOnOrBefore()` steps back over weekends and holidays.
-- **Indices tracked (proxies):** only the three in the brief: Nifty 50 (UTI Nifty 50 Index Fund, 120716), Nifty Midcap 150 (Motilal Oswal Nifty Midcap 150 Index Fund, 147622), Nifty Smallcap 100 (Zerodha Nifty Smallcap 100 ETF, 153837). mfapi has no index data, so index-fund NAVs stand in. Each Indian equity fund is matched to one of them by category; debt and overseas funds have no matching index and are compared with their similar-funds average only.
+- **Market context (brief):** Nifty 50, Nifty Midcap 150 and Nifty Smallcap 100, read from index funds/ETFs that track them (mfapi has no index data): 120716, 147622, 153837.
+- **Stated benchmark (brief):** each fund is compared with the index it measures itself against: the index it copies (index funds), the SEBI/AMFI tier-1 benchmark for its category (e.g. NIFTY Smallcap 250 TRI for small-cap funds, CRISIL Short Duration Debt A-II for short-duration debt), or the market it invests in (overseas FoFs). Its numbers come from the closest public index fund (`lib/benchmarks.ts`), labelled as a stand-in in the UI. After changing the mapping, run `npx tsx scripts/refresh-benchmarks.ts`.
 - **Category average:** mean return of 10 Direct-Growth peers from the same AMFI category (parsed from `NAVAll.txt`), stored in `funds.peer_codes`.
+
+## Reliability
+
+- `npm test` runs unit tests for the returns maths, holiday handling, AMFI category matching, benchmark choice, status labels and chart data. They run automatically before every build (`prebuild`), so a broken calculation fails the deploy.
+- Every daily/weekly run is logged in `job_log` with how it was triggered (Vercel Cron = "automatic", manual, or the report button) and whether it succeeded. The dashboard shows this under **Show automation history**.
+
+## Sharing on WhatsApp
+
+**Share on WhatsApp** builds a 1200×630 image of the week in the browser (`html-to-image`, free, no API). On phones it opens the share sheet; on desktop it downloads the image and opens WhatsApp Web with a text summary.
 
 ## Project layout
 
@@ -75,6 +85,8 @@ app/api/funds          GET list / POST add / DELETE (soft) remove
 app/api/search         mfapi name search
 app/api/dashboard      data for the page
 lib/                   returns, mfapi, AMFI, benchmarks, news, gemini, email, jobs
-scripts/seed.ts        CLI backfill
+scripts/seed.ts        CLI backfill (6 years of NAVs + 52 weekly snapshots)
+scripts/refresh-benchmarks.ts  re-pick benchmarks for existing funds
+tests/                 unit tests (node:test via tsx)
 supabase/schema.sql    tables
 ```

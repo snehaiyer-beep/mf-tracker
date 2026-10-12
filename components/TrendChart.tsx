@@ -19,7 +19,7 @@ import type { PeriodBar, TrendPoint, TrendRange } from "@/lib/trend";
 import { api, prettyName } from "./format";
 
 type LineResponse = { kind: "line"; start: string; end: string; points: TrendPoint[]; benchmark_name: string | null };
-type BarsResponse = { kind: "bars"; bars: PeriodBar[]; benchmark_name: string | null };
+type BarsResponse = { kind: "bars"; source: "snapshots" | "prices"; bars: PeriodBar[]; benchmark_name: string | null };
 type TrendResponse = LineResponse | BarsResponse;
 
 const RANGE_LABEL: Record<TrendRange, string> = { week: "Week", month: "Month", year: "Year" };
@@ -81,7 +81,7 @@ export function TrendChart({ funds }: { funds: Fund[] }) {
   const selected = funds.find((f) => f.scheme_code === code) ?? funds[0];
   const selectedCode = selected?.scheme_code;
   const hasIndex = Boolean(selected?.benchmark_name);
-  const indexName = `${selected?.benchmark_name ?? "Market"} (proxy)`;
+  const indexName = `Benchmark: ${selected?.stated_benchmark ?? selected?.benchmark_name ?? "—"}`;
 
   useEffect(() => {
     if (!selectedCode) return;
@@ -112,6 +112,7 @@ export function TrendChart({ funds }: { funds: Fund[] }) {
   if (bars?.length) {
     subtitle = `Each group of bars is one ${range === "week" ? "week (Friday to Friday)" : "calendar month"}. Above the line = went up, below = went down.`;
     if (bars.at(-1)?.partial) subtitle += ` The last ${range} is still in progress.`;
+    if (trend?.kind === "bars" && trend.source === "snapshots") subtitle += " Read from your saved weekly snapshots.";
   } else if (line?.start) {
     subtitle = `From ${longDate(line.start)} to ${longDate(line.end)}. All lines start at 0%, so the higher line grew more.`;
   }
