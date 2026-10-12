@@ -10,12 +10,23 @@ import { computeReturns } from "./returns";
 import { computeSnapshots, historyStart, saveSnapshots, trackedCodes } from "./snapshots";
 import { db } from "./supabase";
 
+/** Record when a job ran, for the dashboard's "Last updated" panel. Never fails the job. */
+async function recordRun(job: "daily" | "weekly", ok: boolean, detail: unknown) {
+  try {
+    await db().from("job_runs").upsert({ job, ran_at: new Date().toISOString(), ok, detail }, { onConflict: "job" });
+  } catch (err) {
+    console.error("Recording job run failed", err);
+  }
+}
+
 /** Daily: refresh the last 30 days of NAVs for everything we track, then store today's news. */
 export async function runDaily() {
   const funds = await listFunds();
   const navs = await syncMany(trackedCodes(funds), 30, 6);
   const news = await refreshNews();
-  return { funds: funds.length, navs, news };
+  const result = { funds: funds.length, navs, news };
+  await recordRun("daily", navs.failed.length === 0, { navs_ok: navs.ok, navs_failed: navs.failed.length, news_source: news.source, news_stored: news.stored });
+  return result;
 }
 
 /** Weekly: compute snapshots, ask Gemini for a summary, save the report and email it. */
@@ -80,5 +91,6 @@ export async function runWeekly(opts: { sendEmail?: boolean } = {}) {
     }
   }
 
+  await recordRun("weekly", !emailError, { as_of: asOf, verdict: report.verdict, email_sent: sendEmail && !emailError });
   return { as_of: asOf, funds: funds.length, verdict: report.verdict, email_sent: sendEmail && !emailError, email_error: emailError };
 }

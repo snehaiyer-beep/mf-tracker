@@ -55,3 +55,12 @@ alter table nav_history      enable row level security;
 alter table market_news      enable row level security;
 alter table weekly_snapshots enable row level security;
 alter table reports          enable row level security;
+
+-- When each scheduled job last ran, for the dashboard's "Last updated" panel.
+create table if not exists job_runs (
+  job     text primary key,          -- 'daily' | 'weekly'
+  ran_at  timestamptz not null default now(),
+  ok      boolean not null default true,
+  detail  jsonb
+);
+alter table job_runs enable row level security;

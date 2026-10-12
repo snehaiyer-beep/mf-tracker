@@ -153,8 +153,11 @@ function GuideBody(props: Props) {
           <p>The squiggly line is the fund&apos;s price over the last 90 days.</p>
         </Section>
 
-        <Section title="Reading the weekly trend chart">
-          <p>Each dot is one week. Pick a fund and a period at the top.</p>
+        <Section title="Reading the growth chart">
+          <p>
+            Pick a fund, then <span className="text-ink">Week</span>, <span className="text-ink">Month</span> or <span className="text-ink">Year</span>{" "}
+            to see how it grew over that time. All lines start at 0% on the first day, so the higher line grew more.
+          </p>
           <p>
             <span style={{ color: "var(--series-fund)" }}>Blue</span> is your fund,{" "}
             <span style={{ color: "var(--series-index)" }}>orange</span> is the market, <span style={{ color: "var(--series-cat)" }}>green</span> is

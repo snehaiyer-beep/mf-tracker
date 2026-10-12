@@ -11,6 +11,15 @@ import { db, type Snapshot } from "@/lib/supabase";
 export const dynamic = "force-dynamic";
 
 const SPARK_DAYS = 90;
+const IST_MS = 5.5 * 3600 * 1000;
+
+/** Next occurrence of a time in IST (weekday: 0 = Sunday; omit for daily), as an ISO timestamp. */
+function nextIST(hour: number, minute: number, weekday?: number): string {
+  const nowIst = new Date(Date.now() + IST_MS);
+  const t = new Date(Date.UTC(nowIst.getUTCFullYear(), nowIst.getUTCMonth(), nowIst.getUTCDate(), hour, minute));
+  while (t <= nowIst || (weekday !== undefined && t.getUTCDay() !== weekday)) t.setUTCDate(t.getUTCDate() + 1);
+  return new Date(t.getTime() - IST_MS).toISOString();
+}
 
 /** Last ~90 days of NAVs, thinned to ~45 points, for small inline trend lines. */
 function spark(series: NavPoint[], today: string): number[] {
@@ -26,7 +35,7 @@ export async function GET() {
     const funds = await listFunds();
     const since = addDays([previousYearEnd(today), addMonths(today, -1)].sort()[0], -40);
 
-    const [snaps, reports, series] = await Promise.all([
+    const [snaps, reports, series, runs, latestNews] = await Promise.all([
       db()
         .from("weekly_snapshots")
         .select("*")
@@ -39,6 +48,8 @@ export async function GET() {
         .order("week_ending", { ascending: false })
         .limit(20),
       loadSeries([...funds.map((f) => f.scheme_code), ...ALL_BENCHMARKS.map((b) => b.code)], since),
+      db().from("job_runs").select("job, ran_at, ok"),
+      db().from("market_news").select("published_at").order("published_at", { ascending: false }).limit(1).maybeSingle(),
     ]);
     if (snaps.error) throw new Error(snaps.error.message);
     if (reports.error) throw new Error(reports.error.message);
@@ -62,7 +73,17 @@ export async function GET() {
     const sparks: Record<number, number[]> = {};
     for (const f of funds) sparks[f.scheme_code] = spark(series.get(f.scheme_code) ?? [], today);
 
-    return NextResponse.json({ funds, snapshots, latest, reports: reports.data ?? [], indices, sparks });
+    const ranAt = (job: string) => (runs.data ?? []).find((r) => r.job === job)?.ran_at ?? null;
+    const updates = {
+      prices_as_of: funds.map((f) => series.get(f.scheme_code)?.at(-1)?.date).filter(Boolean).sort().pop() ?? null,
+      latest_news_at: latestNews.data?.published_at ?? null,
+      daily_ran_at: ranAt("daily"),
+      report_at: reports.data?.[0]?.created_at ?? ranAt("weekly"),
+      next_daily: nextIST(0, 0),
+      next_report: nextIST(11, 0, 6),
+    };
+
+    return NextResponse.json({ funds, snapshots, latest, reports: reports.data ?? [], indices, sparks, updates });
   } catch (err) {
     return NextResponse.json({ error: errorMessage(err) }, { status: 500 });
   }

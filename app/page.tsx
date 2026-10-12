@@ -6,6 +6,7 @@ import { FundManager } from "@/components/FundManager";
 import { Guide } from "@/components/Guide";
 import { api } from "@/components/format";
 import { IndexTiles, type IndexStat } from "@/components/IndexTiles";
+import { LastUpdated, type Updates } from "@/components/LastUpdated";
 import { Reports, type ReportRow } from "@/components/Reports";
 import { TrendChart } from "@/components/TrendChart";
 import { Verdict } from "@/components/Verdict";
@@ -18,6 +19,7 @@ type Dashboard = {
   reports: ReportRow[];
   indices: IndexStat[];
   sparks: Record<number, number[]>;
+  updates: Updates;
 };
 
 export default function Home() {
@@ -97,6 +99,7 @@ export default function Home() {
         {data && (
           <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_340px]">
             <div className="min-w-0 space-y-4">
+              <LastUpdated updates={data.updates} />
               <div>
                 <div className="label mb-2">The market this week</div>
                 <IndexTiles indices={data.indices} />
@@ -105,7 +108,7 @@ export default function Home() {
               <FundGrid funds={data.funds} latest={data.latest} sparks={data.sparks} summaries={summaries} watched={watched} />
               <div className="grid gap-4 xl:grid-cols-3">
                 <div className="xl:col-span-2">
-                  <TrendChart funds={data.funds} snapshots={data.snapshots} />
+                  <TrendChart funds={data.funds} />
                 </div>
                 <Reports reports={data.reports} funds={data.funds} />
               </div>
